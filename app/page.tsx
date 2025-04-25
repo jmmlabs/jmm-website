@@ -3,6 +3,7 @@ import React from "react"
 import Image from "next/image"
 import { MenuBar } from "@/components/menu-bar"
 import { motion } from "framer-motion"
+import FeaturedProjects from "@/components/FeaturedProjects";
 
 export default function Page() {
   return (
@@ -30,22 +31,24 @@ export default function Page() {
             <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground text-center max-w-2xl mb-8 px-2 sm:px-0 break-words">
               DESCRIPTION TEXT PARAGRAPH GOES HERE
             </p>
+            {/* Scroll indicator shown only at the bottom of the first viewport, below the description paragraph */}
+            <div className="w-full flex flex-col items-center pt-4 pb-10">
+              <span className="text-base sm:text-lg text-muted-foreground mb-3 sm:mb-6 select-none">SCROLL TO SEE MORE</span>
+              <motion.div
+                animate={{ y: [0, -18, 0] }}
+                transition={{ repeat: Infinity, duration: 1.3, ease: 'easeInOut' }}
+              >
+                <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <circle cx="24" cy="24" r="20" stroke="currentColor" strokeWidth="2" className="text-muted" />
+                  <polyline points="16,22 24,30 32,22" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground" />
+                </svg>
+              </motion.div>
+            </div>
           </div>
         </main>
+        <FeaturedProjects />
         {/* Spacer to push bottom content to bottom of viewport */}
         <div className="flex-grow" />
-        <div className="w-full flex flex-col items-center pb-6 sm:pb-8">
-          <span className="text-base sm:text-lg text-muted-foreground mb-3 sm:mb-6 select-none">SCROLL TO SEE MORE</span>
-          <motion.div
-            animate={{ y: [0, -18, 0] }}
-            transition={{ repeat: Infinity, duration: 1.3, ease: "easeInOut" }}
-          >
-            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <circle cx="24" cy="24" r="20" stroke="currentColor" strokeWidth="2" className="text-muted" />
-              <polyline points="16,22 24,30 32,22" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground" />
-            </svg>
-          </motion.div>
-        </div>
       </div>
     </div>
   )
