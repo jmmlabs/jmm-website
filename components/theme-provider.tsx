@@ -11,7 +11,6 @@ export function ThemeProvider({
       defaultTheme="dark"
       forcedTheme="dark"
       enableSystem={false}
-      disableSystemTheme
     >
       {children}
     </NextThemesProvider>
