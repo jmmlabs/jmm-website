@@ -9,28 +9,28 @@ const projects = [
     description: 'Description text paragraph goes here...',
     badges: ['Design', 'Development', 'Strategy', 'Research'],
     image: '/placeholder.jpg',
-    direction: 'right',
+    direction: 'right' as const,
   },
   {
     title: 'Long Title Goes Here',
     description: 'Description text paragraph goes here...',
     badges: ['Design', 'Development', 'Strategy', 'Research'],
     image: '/placeholder.jpg',
-    direction: 'left',
+    direction: 'left' as const,
   },
   {
     title: 'Long Title Goes Here',
     description: 'Description text paragraph goes here...',
     badges: ['Design', 'Development', 'Strategy', 'Research'],
     image: '/placeholder.jpg',
-    direction: 'right',
+    direction: 'right' as const,
   },
   {
     title: 'Long Title Goes Here',
     description: 'Description text paragraph goes here...',
     badges: ['Design', 'Development', 'Strategy', 'Research'],
     image: '/placeholder.jpg',
-    direction: 'left',
+    direction: 'left' as const,
   },
 ];
 
