@@ -56,7 +56,7 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
           onMouseDown={handleBackdropClick}
         >
           <motion.div
-            className="relative bg-background rounded-xl shadow-2xl max-w-2xl w-full mx-2 p-0 flex flex-col items-center dark:bg-[#18181b]"
+            className="relative bg-background rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] mx-2 p-0 flex flex-col items-stretch dark:bg-[#18181b] overflow-y-auto"
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.95, opacity: 0 }}
@@ -103,20 +103,24 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
                 &#8594;
               </button>
             )}
-            <div className="flex flex-col items-center w-full py-12 px-6">
-              <h2 className="text-3xl font-bold text-center text-foreground mb-2">{card.title}</h2>
-              <p className="text-lg text-muted-foreground text-center mb-6 max-w-xl">{card.description}</p>
-              <div className="relative w-full flex justify-center mb-6">
+            <div className="flex flex-col items-center w-full pt-8 pb-2 px-4 gap-4 md:gap-6">
+              {/* Title: centered at top with padding */}
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2 text-center w-full pt-2">{card.title}</h2>
+              {/* Description: centered below title */}
+              <p className="text-base md:text-lg text-muted-foreground mb-4 md:mb-6 text-center w-full max-w-2xl">{card.description}</p>
+              {/* Image: centered below description, with padding */}
+              <div className="w-full flex justify-center items-center mb-4 md:mb-6">
                 <Image
                   src={card.image}
                   alt={card.title}
-                  width={480}
-                  height={320}
-                  className="rounded-2xl object-cover max-h-[60vh] w-auto mx-auto border-4 border-border bg-background"
+                  width={960}
+                  height={600}
+                  className="rounded-2xl object-cover w-full max-w-2xl max-h-[60vh] border-4 border-border bg-background"
                   priority
                 />
               </div>
-              <div className="text-base text-muted-foreground mt-2">
+              {/* Date: centered below image, with same bottom padding as h2 top */}
+              <div className="text-base md:text-lg text-muted-foreground mt-2 text-center w-full pb-2">
                 {new Date(card.date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
               </div>
             </div>
