@@ -6,14 +6,9 @@ import { useRouter } from "next/navigation";
 const IMAGE_SRC = "/small-easter-egg-frisco.png";
 const DIAGONAL_DISTANCE = 120; // px, how far the image slides in/out
 
-const isTouchDevice = () => {
-  if (typeof window === "undefined") return false;
-  return (
-    "ontouchstart" in window ||
-    navigator.maxTouchPoints > 0 ||
-    navigator.msMaxTouchPoints > 0
-  );
-};
+const isTouchDevice = () =>
+  "ontouchstart" in window ||
+  navigator.maxTouchPoints > 0;
 
 const SecretPageTrigger: React.FC = () => {
   const [visible, setVisible] = useState(false);
