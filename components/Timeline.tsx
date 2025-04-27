@@ -85,8 +85,8 @@ export default function Timeline() {
         })}
         {/* To Be Continued marker at the end, always below last dot */}
         <div />
-        <div className="flex flex-col items-center" style={{ paddingTop: '64px' }}>
-          <span className="text-foreground text-lg font-semibold uppercase mt-2">TO BE CONTINUED</span>
+        <div className="flex flex-col items-center justify-center col-start-2 col-end-3" style={{ paddingTop: '64px' }}>
+          <span className="text-foreground text-xs md:text-base font-semibold uppercase mt-2 whitespace-nowrap text-center max-w-xs md:max-w-sm truncate">TO BE CONTINUED</span>
         </div>
         <div />
       </div>
