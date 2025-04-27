@@ -46,7 +46,7 @@ export default function Timeline() {
   return (
     <section className="relative w-full flex flex-col items-center pt-8 pb-16 px-2">
       <h2 className="text-3xl font-bold mb-8 text-center text-foreground">OUR STORY</h2>
-      <div ref={timelineWrapperRef} className="relative w-full max-w-4xl mx-auto min-h-[600px] grid grid-cols-3 gap-x-0 items-start bg-transparent" style={{ scrollbarGutter: 'stable' }}>
+      <div ref={timelineWrapperRef} className="relative w-full max-w-4xl mx-auto min-h-[600px] grid grid-cols-3 md:grid-cols-[2fr_56px_2fr] gap-x-0 items-start bg-transparent" style={{ scrollbarGutter: 'stable' }}>
         {/* Timeline cards, dots, and line segments */}
         {sorted.map((event, idx) => {
           // Intersection observer for this row
@@ -57,12 +57,12 @@ export default function Timeline() {
           return (
             <React.Fragment key={event.date + event.title}>
               {/* Left column (even idx) */}
-              <div className={`col-span-1 flex justify-end items-center min-h-[140px] snap-start ${idx % 2 === 0 ? '' : 'invisible'}`}
+              <div className={`flex justify-end items-center min-h-[140px] snap-start ${idx % 2 === 0 ? '' : 'invisible'}`}
                 style={{ zIndex: 2 }}>
                 {idx % 2 === 0 && <TimelineCard {...event} side="left" idx={idx} forwardedRef={ref} inView={inView} />}
               </div>
               {/* Center column: timeline dot and animated line segment */}
-              <div className="col-span-1 flex flex-col items-center justify-center relative min-h-[140px] z-10">
+              <div className="flex flex-col items-center justify-center relative min-h-[140px] z-10">
                 {/* Line segment: fade in with card */}
                 {idx < sorted.length - 1 && (
                   <motion.div
@@ -76,7 +76,7 @@ export default function Timeline() {
                 <div className="w-5 h-5 bg-background border-4 border-border rounded-full relative z-10" />
               </div>
               {/* Right column (odd idx) */}
-              <div className={`col-span-1 flex justify-start items-center min-h-[140px] snap-start ${idx % 2 === 1 ? '' : 'invisible'}`}
+              <div className={`flex justify-start items-center min-h-[140px] snap-start ${idx % 2 === 1 ? '' : 'invisible'}`}
                 style={{ zIndex: 2 }}>
                 {idx % 2 === 1 && <TimelineCard {...event} side="right" idx={idx} forwardedRef={ref} inView={inView} />}
               </div>
@@ -84,11 +84,11 @@ export default function Timeline() {
           );
         })}
         {/* To Be Continued marker at the end, always below last dot */}
-        <div className="col-span-1" />
-        <div className="col-span-1 flex flex-col items-center" style={{ paddingTop: '64px' }}>
+        <div />
+        <div className="flex flex-col items-center" style={{ paddingTop: '64px' }}>
           <span className="text-foreground text-lg font-semibold uppercase mt-2">TO BE CONTINUED</span>
         </div>
-        <div className="col-span-1" />
+        <div />
       </div>
       {/* Modal for card details */}
       <TimelineModal

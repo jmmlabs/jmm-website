@@ -24,7 +24,7 @@ export const TimelineCard: React.FC<TimelineCardProps> = ({ title, description, 
 
   return (
     // OUTER: layout, spacing, padding
-    <div className="p-2 flex items-center justify-center max-w-sm w-full min-h-[120px] h-[120px]">
+    <div className="p-2 flex items-center justify-center max-w-2xl w-full min-h-[120px] h-[120px] mx-auto">
       <motion.div
         ref={forwardedRef}
         initial={{ opacity: 0, x: side === "left" ? -80 : 80 }}
@@ -51,10 +51,9 @@ export const TimelineCard: React.FC<TimelineCardProps> = ({ title, description, 
           />
         </div>
         {/* Title & Description: always shown except xs */}
-        <div className="flex flex-col flex-grow overflow-hidden w-full items-center">
-          <h3 className="font-bold text-base text-foreground truncate w-full overflow-hidden text-center block xs:hidden sm:block">{title}</h3>
-          {/* Hide description on vertical stack (sm and below) */}
-          <p className="text-xs text-muted-foreground line-clamp-2 hidden md:block w-full overflow-hidden">{description}</p>
+        <div className="flex flex-col flex-grow overflow-hidden w-full items-center md:items-start">
+          <h3 className="font-bold text-base text-foreground truncate w-full overflow-hidden text-center md:text-left md:w-full">{title}</h3>
+          <p className="text-xs text-muted-foreground line-clamp-2 hidden md:block w-full overflow-hidden text-left">{description}</p>
         </div>
         {/* Date: always visible, centered on xs */}
         <div className="flex flex-col items-center min-w-[54px] w-auto md:w-auto justify-center">
