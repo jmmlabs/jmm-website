@@ -23,37 +23,47 @@ export const TimelineCard: React.FC<TimelineCardProps> = ({ title, description, 
   const stagger = isFirstBatch ? 0.13 : 0.08;
 
   return (
-    <motion.article
-      ref={forwardedRef}
-      className={`bg-muted rounded-xl shadow-lg flex items-center md:gap-3 p-4 max-w-sm w-full min-h-[120px] h-[120px]
-        ${side === "left" ? "flex-row" : "flex-row-reverse"} justify-center md:justify-normal`}
-      initial={{ opacity: 0, x: side === "left" ? -80 : 80 }}
-      animate={inView ? { opacity: 1, x: 0 } : {}}
-      transition={{ duration, type: "spring", bounce: 0.24, delay: inView ? idx * stagger : 0 }}
-    >
-      {/* Image: hidden on sm and below */}
-      <div className="hidden md:flex flex-shrink-0">
-        <Image
-          src={image}
-          alt={title}
-          width={64}
-          height={64}
-          className="rounded-lg object-cover bg-background"
-        />
-      </div>
-      {/* Title & Description: always shown except xs */}
-      <div className="flex flex-col flex-grow overflow-hidden">
-        <h3 className="font-bold text-lg text-foreground truncate block xs:hidden sm:block">{title}</h3>
-        {/* Hide description on xs screens */}
-        <p className="text-sm text-muted-foreground line-clamp-2 hidden sm:block">{description}</p>
-      </div>
-      {/* Date: always visible, centered on xs */}
-      <div className="flex flex-col items-center min-w-[54px] w-full md:w-auto justify-center">
-        <span className="text-xs text-muted-foreground">{new Date(date).toLocaleString('en-US', { month: 'short' }).toUpperCase()}</span>
-        <span className="font-bold text-xl text-foreground">{new Date(date).getDate()}</span>
-        <span className="text-xs text-muted-foreground">{new Date(date).getFullYear()}</span>
-      </div>
-    </motion.article>
+    // OUTER: layout, spacing, padding
+    <div className="p-2 flex items-center justify-center max-w-sm w-full min-h-[120px] h-[120px]">
+      <motion.div
+        ref={forwardedRef}
+        initial={{ opacity: 0, x: side === "left" ? -80 : 80 }}
+        animate={inView ? { opacity: 1, x: 0 } : {}}
+        whileHover={{ scale: 1.045, boxShadow: "0 4px 32px 0 rgba(80,80,150,0.14)" }}
+        whileTap={{ scale: 1.03 }}
+        transition={{
+          opacity: { type: "spring", duration: 0.6, bounce: 0.24, delay: inView ? idx * stagger : 0 },
+          x: { type: "spring", duration: 0.6, bounce: 0.24, delay: inView ? idx * stagger : 0 },
+          scale: { type: "tween", duration: 0.08, ease: "linear" }
+        }}
+        className={`bg-muted rounded-xl shadow-lg flex flex-col items-center md:items-center md:${side === "left" ? "flex-row" : "flex-row-reverse"} md:gap-1 w-full h-full p-3`}
+        style={{ cursor: 'pointer' }}
+        onClick={() => typeof window !== 'undefined' && window.dispatchEvent(new CustomEvent('timelineCardClick', { detail: { idx } }))}
+      >
+        {/* Image: hidden on sm and below */}
+        <div className={`hidden md:flex flex-shrink-0 ${side === "left" ? "mr-3" : "ml-0"}`}>
+          <Image
+            src={image}
+            alt={title}
+            width={64}
+            height={64}
+            className="rounded-lg object-cover bg-background"
+          />
+        </div>
+        {/* Title & Description: always shown except xs */}
+        <div className="flex flex-col flex-grow overflow-hidden w-full items-center">
+          <h3 className="font-bold text-base text-foreground truncate w-full overflow-hidden text-center block xs:hidden sm:block">{title}</h3>
+          {/* Hide description on vertical stack (sm and below) */}
+          <p className="text-xs text-muted-foreground line-clamp-2 hidden md:block w-full overflow-hidden">{description}</p>
+        </div>
+        {/* Date: always visible, centered on xs */}
+        <div className="flex flex-col items-center min-w-[54px] w-auto md:w-auto justify-center">
+          <span className="text-xs text-muted-foreground">{new Date(date).toLocaleString('en-US', { month: 'short' }).toUpperCase()}</span>
+          <span className="font-bold text-xl text-foreground">{new Date(date).getDate()}</span>
+          <span className="text-xs text-muted-foreground">{new Date(date).getFullYear()}</span>
+        </div>
+      </motion.div>
+    </div>
   );
 };
 

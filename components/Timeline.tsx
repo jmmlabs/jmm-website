@@ -2,6 +2,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import { timelineData } from "../data/timelineData";
 import TimelineCard from "./TimelineCard";
+import TimelineModal from "./TimelineModal";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 
@@ -24,6 +25,23 @@ export default function Timeline() {
       return next;
     });
   };
+
+  // Modal state
+  const [modalIdx, setModalIdx] = useState<number | null>(null);
+
+  // Listen for card click events
+  useEffect(() => {
+    const handler = (e: any) => {
+      if (typeof e.detail?.idx === "number") setModalIdx(e.detail.idx);
+    };
+    window.addEventListener("timelineCardClick", handler);
+    return () => window.removeEventListener("timelineCardClick", handler);
+  }, []);
+
+  // Modal navigation handlers
+  const closeModal = () => setModalIdx(null);
+  const prevModal = () => setModalIdx((idx) => (idx !== null && idx > 0 ? idx - 1 : idx));
+  const nextModal = () => setModalIdx((idx) => (idx !== null && idx < sorted.length - 1 ? idx + 1 : idx));
 
   return (
     <section className="relative w-full flex flex-col items-center pt-8 pb-16 px-2">
@@ -72,6 +90,16 @@ export default function Timeline() {
         </div>
         <div className="col-span-1" />
       </div>
+      {/* Modal for card details */}
+      <TimelineModal
+        isOpen={modalIdx !== null}
+        onClose={closeModal}
+        card={modalIdx !== null ? sorted[modalIdx] : sorted[0]}
+        currentIdx={modalIdx ?? 0}
+        total={sorted.length}
+        onPrev={prevModal}
+        onNext={nextModal}
+      />
     </section>
   );
 }
