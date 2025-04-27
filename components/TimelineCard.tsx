@@ -2,21 +2,34 @@
 import React from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import type { TimelineEvent } from "../data/timelineData";
 
-interface TimelineCardProps extends TimelineEvent {
+export interface TimelineCardProps {
+  title: string;
+  description: string;
+  image: string;
+  date: string;
   side: "left" | "right";
+  idx?: number;
+  inView?: boolean;
+  forwardedRef?: React.Ref<HTMLDivElement>;
 }
 
-// Placeholder: styling and animation to be refined
-export const TimelineCard: React.FC<TimelineCardProps> = ({ title, description, image, date, side }) => {
+const FIRST_VIEWPORT_COUNT = 4; // Number of cards likely in first viewport
+
+export const TimelineCard: React.FC<TimelineCardProps> = ({ title, description, image, date, side, idx = 0, inView = false, forwardedRef }) => {
+  // Animation timing logic
+  const isFirstBatch = idx < FIRST_VIEWPORT_COUNT;
+  const duration = isFirstBatch ? 1.05 : 0.75;
+  const stagger = isFirstBatch ? 0.13 : 0.08;
+
   return (
     <motion.article
+      ref={forwardedRef}
       className={`bg-muted rounded-xl shadow-lg flex items-center md:gap-3 p-4 max-w-sm w-full min-h-[120px] h-[120px]
         ${side === "left" ? "flex-row" : "flex-row-reverse"} justify-center md:justify-normal`}
       initial={{ opacity: 0, x: side === "left" ? -80 : 80 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.6, type: "spring", bounce: 0.24 }}
+      animate={inView ? { opacity: 1, x: 0 } : {}}
+      transition={{ duration, type: "spring", bounce: 0.24, delay: inView ? idx * stagger : 0 }}
     >
       {/* Image: hidden on sm and below */}
       <div className="hidden md:flex flex-shrink-0">

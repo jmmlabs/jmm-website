@@ -9,27 +9,33 @@ export interface TimelineEvent {
 
 export const timelineData: TimelineEvent[] = [
   {
-    title: "First Meeting",
-    description: "We met for the very first time.",
-    image: "/timeline1.jpg",
-    date: "2023-02-14",
+    title: "First Date",
+    description: "Our first date was at the campus coffee shop.",
+    image: "/timeline6.jpg",
+    date: "2021-02-13",
   },
   {
-    title: "First Trip",
-    description: "Our first trip together.",
+    title: "Trip to the Lake",
+    description: "We spent a sunny weekend at the lake with friends.",
     image: "/timeline2.jpg",
-    date: "2023-05-10",
+    date: "2021-05-22",
   },
   {
-    title: "Moved In",
-    description: "We moved in together!",
+    title: "First Concert Together",
+    description: "Saw our favorite band live for the first time.",
     image: "/timeline3.jpg",
-    date: "2023-09-01",
+    date: "2021-09-10",
   },
   {
-    title: "Engagement",
-    description: "We got engaged!",
+    title: "Moved In Together",
+    description: "We moved into our first apartment.",
     image: "/timeline4.jpg",
-    date: "2024-03-22",
+    date: "2022-01-15",
+  },
+  {
+    title: "Adopted Luna",
+    description: "Brought home our cat Luna!",
+    image: "/timeline5.jpg",
+    date: "2022-06-01",
   },
 ];
