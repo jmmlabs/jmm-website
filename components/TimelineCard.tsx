@@ -6,7 +6,7 @@ import Image from "next/image";
 export interface TimelineCardProps {
   title: string;
   description: string;
-  image: string;
+  images: string[];
   date: string;
   side: "left" | "right";
   idx?: number;
@@ -16,7 +16,7 @@ export interface TimelineCardProps {
 
 const FIRST_VIEWPORT_COUNT = 4; // Number of cards likely in first viewport
 
-export const TimelineCard: React.FC<TimelineCardProps> = ({ title, description, image, date, side, idx = 0, inView = false, forwardedRef }) => {
+export const TimelineCard: React.FC<TimelineCardProps> = ({ title, description, images, date, side, idx = 0, inView = false, forwardedRef }) => {
   // Animation timing logic
   const isFirstBatch = idx < FIRST_VIEWPORT_COUNT;
   const duration = isFirstBatch ? 1.05 : 0.75;
@@ -41,15 +41,17 @@ export const TimelineCard: React.FC<TimelineCardProps> = ({ title, description, 
         onClick={() => typeof window !== 'undefined' && window.dispatchEvent(new CustomEvent('timelineCardClick', { detail: { idx } }))}
       >
         {/* Image: hidden on sm and below */}
-        <div className={`hidden md:flex flex-shrink-0 ${side === "left" ? "mr-3" : "ml-0"}`}>
-          <Image
-            src={image}
-            alt={title}
-            width={64}
-            height={64}
-            className="rounded-lg object-cover bg-background"
-          />
-        </div>
+        {images && images.length > 0 && (
+          <div className={`hidden md:flex flex-shrink-0 ${side === "left" ? "mr-3" : "ml-0"}`}>
+            <Image
+              src={images[0]}
+              alt={`${title} - Image 1`}
+              width={64}
+              height={64}
+              className="rounded-lg object-cover bg-background"
+            />
+          </div>
+        )}
         {/* Title & Description: always shown except xs */}
         <div className="flex flex-col h-full justify-center items-center md:items-start order-1 md:order-none w-full">
           <h3 className="font-bold text-base text-foreground text-center md:text-left w-auto md:w-full">{title}</h3>
