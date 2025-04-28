@@ -66,26 +66,25 @@ export default function BackgroundAudioPlayer({ src, storageKey = "background-au
         preload="auto"
         autoPlay
         muted={muted}
-        volume={muted ? 0 : 1}
       />
       <button
         onClick={() => setMuted(m => !m)}
-        className={`fixed bottom-4 right-4 z-50 rounded-full p-3 shadow-lg transition-colors
+        className={`fixed bottom-4 right-4 z-50 flex items-center justify-center w-12 h-12 rounded-full shadow-lg transition-colors border-2 focus:outline-none
           ${muted
-            ? "bg-gray-800 text-gray-400 ring-2 ring-gray-600"
-            : "bg-primary-700 text-primary-200 ring-2 ring-primary-400 animate-pulse"
+            ? "bg-background border-border text-muted-foreground hover:bg-border opacity-80"
+            : "bg-muted border-border text-foreground hover:bg-border opacity-95"
           }`}
         aria-label={muted ? "Unmute music" : "Mute music"}
-        style={{ outline: "none" }}
+        data-component-name="BackgroundAudioPlayer"
+        style={{ boxShadow: "0 2px 12px 0 rgba(0,0,0,0.20)", transition: 'background 0.2s, border 0.2s, color 0.2s, opacity 0.2s' }}
       >
         {muted ? (
-          <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-            <path d="M9 9v6h4l5 5V4l-5 5H9z" />
-            <line x1="1" y1="23" x2="23" y2="1" stroke="currentColor" strokeWidth="2"/>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="block">
+            <path d="M11 5L6 9H2v6h4l5 4V5z" />
           </svg>
         ) : (
-          <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-            <path d="M9 9v6h4l5 5V4l-5 5H9z" />
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="block">
+            <path d="M11 5L6 9H2v6h4l5 4V5z" />
             <path d="M19 5a9 9 0 0 1 0 14" />
           </svg>
         )}
