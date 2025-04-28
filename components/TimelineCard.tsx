@@ -24,7 +24,7 @@ export const TimelineCard: React.FC<TimelineCardProps> = ({ title, description, 
 
   return (
     // OUTER: layout, spacing, padding
-    <div className="p-2 flex items-center justify-center max-w-2xl w-full min-h-[120px] h-[120px] mx-auto">
+    <div className="p-2 flex items-center justify-center max-w-2xl w-full min-h-[120px] h-[170px] md:h-[140px] mx-auto">
       <motion.div
         ref={forwardedRef}
         initial={{ opacity: 0, x: side === "left" ? -80 : 80 }}
@@ -36,7 +36,7 @@ export const TimelineCard: React.FC<TimelineCardProps> = ({ title, description, 
           x: { type: "spring", duration: 0.6, bounce: 0.24, delay: inView ? idx * stagger : 0 },
           scale: { type: "tween", duration: 0.08, ease: "linear" }
         }}
-        className={`bg-muted rounded-xl shadow-lg flex flex-col items-center md:items-center md:${side === "left" ? "flex-row" : "flex-row-reverse"} md:gap-1 w-full h-full p-3`}
+        className={`bg-muted rounded-xl shadow-lg flex flex-col md:flex-row items-center md:items-center md:${side === "left" ? "flex-row" : "flex-row-reverse"} md:gap-1 w-full h-full p-3`}
         style={{ cursor: 'pointer' }}
         onClick={() => typeof window !== 'undefined' && window.dispatchEvent(new CustomEvent('timelineCardClick', { detail: { idx } }))}
       >
@@ -51,12 +51,12 @@ export const TimelineCard: React.FC<TimelineCardProps> = ({ title, description, 
           />
         </div>
         {/* Title & Description: always shown except xs */}
-        <div className="flex flex-col flex-grow overflow-hidden w-full items-center md:items-start">
-          <h3 className="font-bold text-base text-foreground truncate w-full overflow-hidden text-center md:text-left md:w-full">{title}</h3>
-          <p className="text-xs text-muted-foreground line-clamp-2 hidden md:block w-full overflow-hidden text-left">{description}</p>
+        <div className="flex flex-col h-full justify-center items-center md:items-start order-1 md:order-none w-full">
+          <h3 className="font-bold text-base text-foreground text-center md:text-left w-auto md:w-full">{title}</h3>
+          <p className="text-xs text-muted-foreground w-full overflow-hidden text-ellipsis text-left max-w-full break-words min-w-0 line-clamp-2 max-h-[2.6em] hidden md:block">{description}</p>
         </div>
         {/* Date: always visible, centered on xs */}
-        <div className="flex flex-col items-center min-w-[54px] w-auto md:w-auto justify-center">
+        <div className="flex flex-col items-center min-w-[54px] w-auto md:w-auto justify-center order-2 md:order-none">
           <span className="text-xs text-muted-foreground">{new Date(date).toLocaleString('en-US', { month: 'short' }).toUpperCase()}</span>
           <span className="font-bold text-xl text-foreground">{new Date(date).getDate()}</span>
           <span className="text-xs text-muted-foreground">{new Date(date).getFullYear()}</span>

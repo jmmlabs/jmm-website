@@ -46,14 +46,12 @@ export default function Timeline() {
   return (
     <section className="relative w-full flex flex-col items-center pt-8 pb-16 px-2">
       <h2 className="text-3xl font-bold mb-8 text-center text-foreground">OUR STORY</h2>
-      <div ref={timelineWrapperRef} className="relative w-full max-w-4xl mx-auto min-h-[600px] grid grid-cols-3 md:grid-cols-[2fr_56px_2fr] gap-x-0 items-start bg-transparent" style={{ scrollbarGutter: 'stable' }}>
+      <div ref={timelineWrapperRef} className="relative w-full max-w-4xl mx-auto min-h-[600px] grid grid-cols-3 md:grid-cols-[2fr_28px_2fr] gap-x-0 items-start bg-transparent" style={{ scrollbarGutter: 'stable' }}>
         {/* Timeline cards, dots, and line segments */}
         {sorted.map((event, idx) => {
           // Intersection observer for this row
           const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.2 });
-          // Update inViewArr for line segment animation
           useEffect(() => { handleInView(idx, inView); }, [inView]);
-          // Line segment: height matches the row (except last row, which ends at dot center)
           return (
             <React.Fragment key={event.date + event.title}>
               {/* Left column (even idx) */}
@@ -61,19 +59,17 @@ export default function Timeline() {
                 style={{ zIndex: 2 }}>
                 {idx % 2 === 0 && <TimelineCard {...event} side="left" idx={idx} forwardedRef={ref} inView={inView} />}
               </div>
-              {/* Center column: timeline dot and animated line segment */}
+              {/* Center column: timeline dot and vertical line */}
               <div className="flex flex-col items-center justify-center relative min-h-[140px] z-10">
-                {/* Line segment: fade in with card */}
-                {idx < sorted.length - 1 && (
-                  <motion.div
-                    className="absolute left-1/2 -translate-x-1/2 bg-border w-2"
-                    style={{ top: "50%", height: "140px", zIndex: 0 }}
-                    initial={{ opacity: 0 }}
-                    animate={inViewArr[idx] ? { opacity: 1 } : {}}
-                    transition={{ duration: 0.7, delay: idx * 0.08 }}
-                  />
+                {/* Vertical line segment for all but first and last dot */}
+                {idx !== 0 && (
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 bg-border z-0" style={{ height: '50%' }} />
                 )}
-                <div className="w-5 h-5 bg-background border-4 border-border rounded-full relative z-10" />
+                {idx !== sorted.length - 1 && (
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-2 bg-border z-0" style={{ height: '50%' }} />
+                )}
+                {/* Dot */}
+                <div className="w-5 h-5 bg-background border-4 border-border rounded-full relative z-10 mt-0" />
               </div>
               {/* Right column (odd idx) */}
               <div className={`flex justify-start items-center min-h-[140px] snap-start ${idx % 2 === 1 ? '' : 'invisible'}`}
