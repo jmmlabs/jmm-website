@@ -62,7 +62,14 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
     setTimeout(() => {
       setSelectedImgIdx(idx);
       setFade(false);
-    }, 180);
+    }, 320); // Smoother, longer fade
+  };
+
+  // Handle click outside modal to close
+  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
+      onClose();
+    }
   };
 
   return (
@@ -72,20 +79,28 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
+          transition={{ duration: 0.28, ease: 'easeInOut' }}
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-2"
+          onMouseDown={handleBackdropClick}
         >
           <motion.div
             ref={modalRef}
             initial={{ y: 60, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 60, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 200, damping: 24 }}
+            transition={{ type: "spring", stiffness: 160, damping: 22, duration: 0.45 }}
             className="relative bg-card rounded-2xl shadow-xl max-w-3xl w-full p-4 md:p-8 flex flex-col items-center"
             tabIndex={-1}
           >
             {/* Main Image with fade transition */}
-            <div className="w-full flex flex-col items-center">
-              <div className={`rounded-2xl object-cover w-full max-w-2xl max-h-[60vh] border-4 border-border bg-background overflow-hidden transition-opacity duration-200 ${fade ? 'opacity-0' : 'opacity-100'}`}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={card.images[selectedImgIdx]}
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 1.01 }}
+                transition={{ duration: 0.38, ease: 'easeInOut' }}
+                className={`rounded-2xl object-cover w-full max-w-2xl max-h-[60vh] border-4 border-border bg-background overflow-hidden`}
                 style={{ aspectRatio: '16/9', minHeight: 180 }}
               >
                 <Image
@@ -93,36 +108,40 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
                   alt={`${card.title} - Image ${selectedImgIdx + 1}`}
                   width={960}
                   height={600}
-                  className="rounded-2xl object-cover w-full h-full"
+                  className="rounded-2xl object-cover w-full h-full transition-opacity duration-300"
                   priority
                 />
+              </motion.div>
+            </AnimatePresence>
+            {/* Thumbnails row (only if multiple images) */}
+            {card.images.length > 1 && (
+              <div className="flex flex-row gap-2 mt-3 w-full overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent">
+                {card.images.slice(0, 5).map((img, idx) => (
+                  <motion.button
+                    key={img}
+                    onClick={() => handleThumbnailClick(idx)}
+                    className={`border-2 rounded-lg transition-all duration-200 focus:outline-none ${selectedImgIdx === idx ? 'border-primary shadow-md' : 'border-border opacity-80 hover:opacity-100'} flex-shrink-0`}
+                    style={{ height: 60, width: 90, minWidth: 60 }}
+                    aria-label={`Show image ${idx + 1}`}
+                    tabIndex={0}
+                    initial={{ opacity: 0, scale: 0.97 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 1.03 }}
+                    transition={{ duration: 0.26, ease: 'easeInOut' }}
+                  >
+                    <Image
+                      src={img}
+                      alt={`${card.title} - Thumbnail ${idx + 1}`}
+                      width={90}
+                      height={60}
+                      className="object-contain w-full h-full rounded-lg"
+                      loading={Math.abs(selectedImgIdx - idx) <= 1 ? 'eager' : 'lazy'}
+                      draggable={false}
+                    />
+                  </motion.button>
+                ))}
               </div>
-              {/* Thumbnails row (only if multiple images) */}
-              {card.images.length > 1 && (
-                <div className="flex flex-row gap-2 mt-3 w-full overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent">
-                  {card.images.slice(0, 5).map((img, idx) => (
-                    <button
-                      key={img}
-                      onClick={() => handleThumbnailClick(idx)}
-                      className={`border-2 rounded-lg transition-all duration-150 focus:outline-none ${selectedImgIdx === idx ? 'border-primary shadow-md' : 'border-border opacity-80 hover:opacity-100'} flex-shrink-0`}
-                      style={{ height: 60, width: 90, minWidth: 60 }}
-                      aria-label={`Show image ${idx + 1}`}
-                      tabIndex={0}
-                    >
-                      <Image
-                        src={img}
-                        alt={`${card.title} - Thumbnail ${idx + 1}`}
-                        width={90}
-                        height={60}
-                        className="object-contain w-full h-full rounded-lg"
-                        loading={Math.abs(selectedImgIdx - idx) <= 1 ? 'eager' : 'lazy'}
-                        draggable={false}
-                      />
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
+            )}
             {/* Title & Description */}
             <h2 className="text-2xl font-bold text-center mt-4 mb-2 text-foreground w-full break-words">
               {card.title}
