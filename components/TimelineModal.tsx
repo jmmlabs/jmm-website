@@ -67,7 +67,8 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
 
   // Handle click outside modal to close
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
+    // Only close if click is directly on the backdrop (not bubbling from inside modal)
+    if (e.target === e.currentTarget) {
       onClose();
     }
   };
@@ -79,16 +80,16 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.28, ease: 'easeInOut' }}
+          transition={{ duration: 0.42, ease: 'easeInOut' }}
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-2"
           onMouseDown={handleBackdropClick}
         >
           <motion.div
             ref={modalRef}
-            initial={{ y: 60, opacity: 0 }}
+            initial={{ y: 80, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 60, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 160, damping: 22, duration: 0.45 }}
+            exit={{ y: 80, opacity: 0 }}
+            transition={{ type: "spring", stiffness: 90, damping: 18, duration: 0.7 }}
             className="relative bg-card rounded-2xl shadow-xl max-w-3xl w-full p-4 md:p-8 flex flex-col items-center"
             tabIndex={-1}
           >
@@ -99,7 +100,7 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
                 initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 1.01 }}
-                transition={{ duration: 0.38, ease: 'easeInOut' }}
+                transition={{ duration: 0.48, ease: 'easeInOut' }}
                 className={`rounded-2xl object-cover w-full max-w-2xl max-h-[60vh] border-4 border-border bg-background overflow-hidden`}
                 style={{ aspectRatio: '16/9', minHeight: 180 }}
               >
@@ -108,7 +109,7 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
                   alt={`${card.title} - Image ${selectedImgIdx + 1}`}
                   width={960}
                   height={600}
-                  className="rounded-2xl object-cover w-full h-full transition-opacity duration-300"
+                  className="rounded-2xl object-cover w-full h-full transition-opacity duration-400"
                   priority
                 />
               </motion.div>
@@ -120,14 +121,14 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
                   <motion.button
                     key={img}
                     onClick={() => handleThumbnailClick(idx)}
-                    className={`border-2 rounded-lg transition-all duration-200 focus:outline-none ${selectedImgIdx === idx ? 'border-primary shadow-md' : 'border-border opacity-80 hover:opacity-100'} flex-shrink-0`}
-                    style={{ height: 60, width: 90, minWidth: 60 }}
+                    className={`border-2 rounded-lg focus:outline-none ${selectedImgIdx === idx ? 'border-primary shadow-md' : 'border-border opacity-80 hover:opacity-100'} flex-shrink-0 transition-all duration-400`}
+                    style={{ height: 60, width: 90, minWidth: 60, transition: 'border-color 0.32s cubic-bezier(0.4,0,0.2,1), box-shadow 0.32s cubic-bezier(0.4,0,0.2,1), opacity 0.18s' }}
                     aria-label={`Show image ${idx + 1}`}
                     tabIndex={0}
                     initial={{ opacity: 0, scale: 0.97 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 1.03 }}
-                    transition={{ duration: 0.26, ease: 'easeInOut' }}
+                    transition={{ duration: 0.32, ease: 'easeInOut' }}
                   >
                     <Image
                       src={img}
