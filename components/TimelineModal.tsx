@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 
@@ -9,7 +9,7 @@ interface TimelineModalProps {
   card: {
     title: string;
     description: string;
-    image: string;
+    images: string[];
     date: string;
   };
   currentIdx: number;
@@ -20,6 +20,13 @@ interface TimelineModalProps {
 
 const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, currentIdx, total, onPrev, onNext }) => {
   const modalRef = useRef<HTMLDivElement>(null);
+  const [selectedImgIdx, setSelectedImgIdx] = useState(0);
+  const [fade, setFade] = useState(false);
+
+  // Reset image index when card changes
+  useEffect(() => {
+    setSelectedImgIdx(0);
+  }, [card]);
 
   // Focus trap and ESC/backdrop handling
   useEffect(() => {
@@ -35,91 +42,145 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
       document.body.style.overflow = "";
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isOpen, currentIdx, total, onClose, onPrev, onNext]);
+  }, [isOpen, onClose, onPrev, onNext, currentIdx, total]);
 
-  // Backdrop click closes only if outside modal content
-  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.target === modalRef.current) onClose();
+  // Preload adjacent images
+  useEffect(() => {
+    if (!card.images || card.images.length <= 1) return;
+    const preload = (src: string) => {
+      const img = new window.Image();
+      img.src = src;
+    };
+    if (card.images[selectedImgIdx - 1]) preload(card.images[selectedImgIdx - 1]);
+    if (card.images[selectedImgIdx + 1]) preload(card.images[selectedImgIdx + 1]);
+  }, [card.images, selectedImgIdx]);
+
+  // Fade transition when changing images
+  const handleThumbnailClick = (idx: number) => {
+    if (idx === selectedImgIdx) return;
+    setFade(true);
+    setTimeout(() => {
+      setSelectedImgIdx(idx);
+      setFade(false);
+    }, 320); // Smoother, longer fade
+  };
+
+  // Handle click outside modal to close
+  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    // Only close if click is directly on the backdrop (not bubbling from inside modal)
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
   };
 
   return (
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          ref={modalRef}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
-          role="dialog"
-          aria-modal="true"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
+          transition={{ duration: 0.42, ease: 'easeInOut' }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-2"
           onMouseDown={handleBackdropClick}
         >
           <motion.div
-            className="relative bg-background rounded-xl shadow-2xl max-w-2xl w-full mx-2 p-0 flex flex-col items-center dark:bg-[#18181b]"
-            initial={{ scale: 0.95, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.95, opacity: 0 }}
-            transition={{ type: "spring", bounce: 0.15, duration: 0.25 }}
-            drag="x"
-            dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={0.18}
-            onDragEnd={(e, info) => {
-              if (info.offset.x < -80 && currentIdx < total - 1) {
-                onNext();
-              } else if (info.offset.x > 80 && currentIdx > 0) {
-                onPrev();
-              }
-            }}
+            ref={modalRef}
+            initial={{ y: 80, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 80, opacity: 0 }}
+            transition={{ type: "spring", stiffness: 90, damping: 18, duration: 0.7 }}
+            className="relative bg-card rounded-2xl shadow-xl max-w-3xl w-full p-4 md:p-8 flex flex-col items-center"
+            tabIndex={-1}
           >
-            {/* Close button */}
+            {/* Main Image with fade transition */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={card.images[selectedImgIdx]}
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 1.01 }}
+                transition={{ duration: 0.48, ease: 'easeInOut' }}
+                className={`rounded-2xl object-cover w-full max-w-2xl max-h-[60vh] border-4 border-border bg-background overflow-hidden`}
+                style={{ aspectRatio: '16/9', minHeight: 180 }}
+              >
+                <Image
+                  src={card.images[selectedImgIdx]}
+                  alt={`${card.title} - Image ${selectedImgIdx + 1}`}
+                  width={960}
+                  height={600}
+                  className="rounded-2xl object-cover w-full h-full transition-opacity duration-400"
+                  priority
+                />
+              </motion.div>
+            </AnimatePresence>
+            {/* Thumbnails row (only if multiple images) */}
+            {card.images.length > 1 && (
+              <div className="flex flex-row gap-2 mt-3 w-full overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent">
+                {card.images.slice(0, 5).map((img, idx) => (
+                  <motion.button
+                    key={img}
+                    onClick={() => handleThumbnailClick(idx)}
+                    className={`border-2 rounded-lg focus:outline-none ${selectedImgIdx === idx ? 'border-primary shadow-md' : 'border-border opacity-80 hover:opacity-100'} flex-shrink-0 transition-all duration-400`}
+                    style={{ height: 60, width: 90, minWidth: 60, transition: 'border-color 0.32s cubic-bezier(0.4,0,0.2,1), box-shadow 0.32s cubic-bezier(0.4,0,0.2,1), opacity 0.18s' }}
+                    aria-label={`Show image ${idx + 1}`}
+                    tabIndex={0}
+                    initial={{ opacity: 0, scale: 0.97 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 1.03 }}
+                    transition={{ duration: 0.32, ease: 'easeInOut' }}
+                  >
+                    <Image
+                      src={img}
+                      alt={`${card.title} - Thumbnail ${idx + 1}`}
+                      width={90}
+                      height={60}
+                      className="object-contain w-full h-full rounded-lg"
+                      loading={Math.abs(selectedImgIdx - idx) <= 1 ? 'eager' : 'lazy'}
+                      draggable={false}
+                    />
+                  </motion.button>
+                ))}
+              </div>
+            )}
+            {/* Title & Description */}
+            <h2 className="text-2xl font-bold text-center mt-4 mb-2 text-foreground w-full break-words">
+              {card.title}
+            </h2>
+            <div className="text-base md:text-lg text-muted-foreground mb-2 text-center w-full max-w-2xl break-words">
+              {card.description}
+            </div>
+            {/* Date */}
+            <div className="text-base md:text-lg text-muted-foreground mt-2 text-center w-full pb-2">
+              {new Date(card.date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
+            </div>
+            {/* Navigation Arrows */}
+            <div className="flex flex-row items-center justify-between w-full mt-4">
+              <button
+                onClick={onPrev}
+                disabled={currentIdx === 0}
+                className="px-4 py-2 rounded-lg bg-muted text-muted-foreground hover:bg-border disabled:opacity-40"
+                aria-label="Previous event"
+              >
+                ← Prev
+              </button>
+              <button
+                onClick={onNext}
+                disabled={currentIdx === total - 1}
+                className="px-4 py-2 rounded-lg bg-muted text-muted-foreground hover:bg-border disabled:opacity-40"
+                aria-label="Next event"
+              >
+                Next →
+              </button>
+            </div>
+            {/* Close */}
             <button
-              className="absolute top-4 right-4 text-2xl text-muted-foreground hover:text-foreground focus:outline-none"
-              aria-label="Close"
               onClick={onClose}
-              tabIndex={0}
+              className="absolute top-4 right-4 text-2xl text-muted-foreground hover:text-foreground focus:outline-none"
+              aria-label="Close modal"
             >
               ×
             </button>
-            {/* Left arrow */}
-            {currentIdx > 0 && (
-              <button
-                className="absolute left-2 top-1/2 -translate-y-1/2 bg-muted rounded-full p-2 text-2xl text-muted-foreground hover:text-foreground shadow-lg focus:outline-none"
-                aria-label="Previous"
-                onClick={onPrev}
-                tabIndex={0}
-              >
-                &#8592;
-              </button>
-            )}
-            {/* Right arrow */}
-            {currentIdx < total - 1 && (
-              <button
-                className="absolute right-2 top-1/2 -translate-y-1/2 bg-muted rounded-full p-2 text-2xl text-muted-foreground hover:text-foreground shadow-lg focus:outline-none"
-                aria-label="Next"
-                onClick={onNext}
-                tabIndex={0}
-              >
-                &#8594;
-              </button>
-            )}
-            <div className="flex flex-col items-center w-full py-12 px-6">
-              <h2 className="text-3xl font-bold text-center text-foreground mb-2">{card.title}</h2>
-              <p className="text-lg text-muted-foreground text-center mb-6 max-w-xl">{card.description}</p>
-              <div className="relative w-full flex justify-center mb-6">
-                <Image
-                  src={card.image}
-                  alt={card.title}
-                  width={480}
-                  height={320}
-                  className="rounded-2xl object-cover max-h-[60vh] w-auto mx-auto border-4 border-border bg-background"
-                  priority
-                />
-              </div>
-              <div className="text-base text-muted-foreground mt-2">
-                {new Date(card.date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
-              </div>
-            </div>
           </motion.div>
         </motion.div>
       )}

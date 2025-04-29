@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://jmmlabs.xyz/sitemap.xml
