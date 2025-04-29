@@ -23,7 +23,7 @@ export const timelineData: TimelineEvent[] = [
   {
     title: "Our First Date",
     description: "After months of patiently waiting, back and forth over Hinge and text, multiple flat tires, and a Dallaskan snow storm, Jacob and Hannah finally get to reconnect for their first date over martinis at Hudson House and share their first kiss in the chilly parking lot as Jacob fills up Hannah's tires and wishes her a safe drive home.",
-    images: ["https://images.unsplash.com/photo-1465101178521-c1a9136a3b41?auto=format&fit=crop&w=800&q=80"],
+    images: ["https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80"],
     date: "2025-01-10",
   },
   {
@@ -59,7 +59,7 @@ export const timelineData: TimelineEvent[] = [
   {
     title: "Jacob's feelings",
     description: "sappy",
-    images: ["https://images.unsplash.com/photo-1465101178521-c1a9136a3b41?auto=format&fit=crop&w=800&q=80"],
+    images: ["https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80"],
     date: "2025-04-02",
   },
   {
@@ -83,7 +83,7 @@ export const timelineData: TimelineEvent[] = [
   {
     title: "Best Call Ever",
     description: "Opening up about past relationships",
-    images: ["https://images.unsplash.com/photo-1465101178521-c1a9136a3b41?auto=format&fit=crop&w=800&q=80"],
+    images: ["https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80"],
     date: "2025-04-25",
   },
 ];

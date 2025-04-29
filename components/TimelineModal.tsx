@@ -33,8 +33,28 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
     if (!isOpen) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
-      if (e.key === "ArrowLeft" && currentIdx > 0) onPrev();
-      if (e.key === "ArrowRight" && currentIdx < total - 1) onNext();
+      if (e.key === "ArrowLeft") {
+        if (card.images && card.images.length > 1 && selectedImgIdx > 0) {
+          setFade(true);
+          setTimeout(() => {
+            setSelectedImgIdx(selectedImgIdx - 1);
+            setFade(false);
+          }, 160);
+        } else if (currentIdx > 0) {
+          onPrev();
+        }
+      }
+      if (e.key === "ArrowRight") {
+        if (card.images && card.images.length > 1 && selectedImgIdx < card.images.length - 1) {
+          setFade(true);
+          setTimeout(() => {
+            setSelectedImgIdx(selectedImgIdx + 1);
+            setFade(false);
+          }, 160);
+        } else if (currentIdx < total - 1) {
+          onNext();
+        }
+      }
     };
     document.body.style.overflow = "hidden";
     window.addEventListener("keydown", handleKeyDown);
@@ -42,7 +62,7 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
       document.body.style.overflow = "";
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isOpen, onClose, onPrev, onNext, currentIdx, total]);
+  }, [isOpen, onClose, onPrev, onNext, currentIdx, total, card.images, selectedImgIdx]);
 
   // Preload adjacent images
   useEffect(() => {
@@ -62,7 +82,7 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
     setTimeout(() => {
       setSelectedImgIdx(idx);
       setFade(false);
-    }, 320); // Smoother, longer fade
+    }, 160); // Faster fade
   };
 
   // Handle click outside modal to close
@@ -97,19 +117,19 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
             <AnimatePresence mode="wait">
               <motion.div
                 key={card.images[selectedImgIdx]}
-                initial={{ opacity: 0, scale: 0.98 }}
+                initial={{ opacity: 0.8, scale: 1.01 }} // Subtle, minimal start
                 animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 1.01 }}
-                transition={{ duration: 0.48, ease: 'easeInOut' }}
+                exit={{ opacity: 0.8, scale: 0.99 }} // Minimal fade out
+                transition={{ duration: 0.14, ease: 'easeOut' }} // Smooth, quick
                 className={`rounded-2xl object-cover w-full max-w-2xl max-h-[60vh] border-4 border-border bg-background overflow-hidden`}
-                style={{ aspectRatio: '16/9', minHeight: 180 }}
+                style={{ aspectRatio: '16/9', minHeight: 180, willChange: 'opacity, transform' }}
               >
                 <Image
                   src={card.images[selectedImgIdx]}
                   alt={`${card.title} - Image ${selectedImgIdx + 1}`}
                   width={960}
                   height={600}
-                  className="rounded-2xl object-cover w-full h-full transition-opacity duration-400"
+                  className="rounded-2xl object-cover w-full h-full"
                   priority
                 />
               </motion.div>
@@ -122,13 +142,13 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
                     key={img}
                     onClick={() => handleThumbnailClick(idx)}
                     className={`border-2 rounded-lg focus:outline-none ${selectedImgIdx === idx ? 'border-primary shadow-md' : 'border-border opacity-80 hover:opacity-100'} flex-shrink-0 transition-all duration-400`}
-                    style={{ height: 60, width: 90, minWidth: 60, transition: 'border-color 0.32s cubic-bezier(0.4,0,0.2,1), box-shadow 0.32s cubic-bezier(0.4,0,0.2,1), opacity 0.18s' }}
+                    style={{ height: 60, width: 90, minWidth: 60, transition: 'border-color 0.16s cubic-bezier(0.4,0,0.2,1), box-shadow 0.16s cubic-bezier(0.4,0,0.2,1), opacity 0.09s' }}
                     aria-label={`Show image ${idx + 1}`}
                     tabIndex={0}
                     initial={{ opacity: 0, scale: 0.97 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 1.03 }}
-                    transition={{ duration: 0.32, ease: 'easeInOut' }}
+                    transition={{ duration: 0.16, ease: 'easeInOut' }} // Faster thumbnail transition
                   >
                     <Image
                       src={img}
