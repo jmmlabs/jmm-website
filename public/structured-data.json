@@ -1,0 +1,17 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Jacob Meyer",
+  "url": "https://jmmlabs.xyz/",
+  "image": "https://jmmlabs.xyz/og-image.jpg",
+  "sameAs": [
+    "https://twitter.com/Jacob___Meyer",
+    "https://www.linkedin.com/in/jacobmatthewmeyer/"
+  ],
+  "jobTitle": "Product Designer / Builder",
+  "worksFor": {
+    "@type": "Organization",
+    "name": "JMM LABS"
+  },
+  "description": "Showcasing a passion for building innovative products, making the world better, solving real problems, spreading love and happiness, and embracing lifelong learning—welcome to JMM LABS."
+}
