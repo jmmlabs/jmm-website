@@ -13,29 +13,43 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* WebSite JSON-LD for Google Rich Results */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "name": "JMM LABS",
+              "url": "https://jmmlabs.xyz/"
+            })
+          }}
+        />
+      </head>
       <body className={inter.className}>
         <script
-  type="application/ld+json"
-  dangerouslySetInnerHTML={{
-    __html: JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "Person",
-      "name": "Jacob Meyer",
-      "url": "https://jmmlabs.xyz/",
-      "image": "https://jmmlabs.xyz/og-image.jpg",
-      "sameAs": [
-        "https://twitter.com/Jacob___Meyer",
-        "https://www.linkedin.com/in/jacobmatthewmeyer/"
-      ],
-      "jobTitle": "Product Designer / Builder",
-      "worksFor": {
-        "@type": "Organization",
-        "name": "JMM LABS"
-      },
-      "description": "Showcasing a passion for building innovative products, making the world better, solving real problems, spreading love and happiness, and embracing lifelong learning—welcome to JMM LABS."
-    })
-  }}
-/>
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Person",
+              "name": "Jacob Meyer",
+              "url": "https://jmmlabs.xyz/",
+              "image": "https://jmmlabs.xyz/og-image.jpg",
+              "sameAs": [
+                "https://twitter.com/Jacob___Meyer",
+                "https://www.linkedin.com/in/jacobmatthewmeyer/"
+              ],
+              "jobTitle": "Product Designer / Builder",
+              "worksFor": {
+                "@type": "Organization",
+                "name": "JMM LABS"
+              },
+              "description": "Showcasing a passion for building innovative products, making the world better, solving real problems, spreading love and happiness, and embracing lifelong learning—welcome to JMM LABS."
+            })
+          }}
+        />
         <ThemeProvider>{children}</ThemeProvider>
         <SecretPageTrigger />
       </body>
@@ -66,7 +80,7 @@ export const metadata = {
     siteName: "JMM LABS",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "https://jmmlabs.xyz/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "Jacob Meyer, JMM LABS, Portfolio"
@@ -81,11 +95,19 @@ export const metadata = {
     title: "Jacob Meyer | JMM LABS",
     description:
       "Showcasing a passion for building innovative products, making the world better, solving real problems, spreading love and happiness, and embracing lifelong learning—welcome to JMM LABS.",
-    images: ["/og-image.jpg"]
+    images: [
+      {
+        url: "https://jmmlabs.xyz/og-image.jpg",
+        alt: "Jacob Meyer, JMM LABS, Portfolio"
+      }
+    ]
   },
   icons: {
     icon: "/favicon.ico",
     apple: "/apple-touch-icon.png"
-  },
-  themeColor: "#18181b"
+  }
+};
+
+export const viewport = {
+  themeColor: "#18181b",
 };
