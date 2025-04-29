@@ -171,7 +171,10 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
               {card.description}
             </div>
             {/* Date */}
-            <div className="text-base md:text-lg text-muted-foreground mt-2 text-center w-full pb-2">
+            <div
+              className="inline-block text-base md:text-lg font-semibold text-primary bg-primary/10 px-3 py-1 mt-2 mb-1 text-center w-auto rounded-full tracking-wide shadow-sm"
+              style={{ letterSpacing: '0.02em' }}
+            >
               {new Date(card.date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
             </div>
             {/* Navigation Arrows */}
