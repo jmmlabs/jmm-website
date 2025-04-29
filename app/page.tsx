@@ -19,13 +19,13 @@ export default function Page() {
           <div className="flex flex-col items-center">
             <div className="rounded-full bg-muted flex items-center justify-center mb-8" style={{ width: 'min(80vw,320px)', height: 'min(80vw,320px)' }}>
               <img
-                alt="Jacob Meyer profile, Ghibli style"
+                alt="Jacob Meyer profile, Full Profile Picture"
                 width={280}
                 height={280}
                 decoding="async"
                 className="rounded-full object-cover shadow-2xl w-[70vw] max-w-[280px] h-[70vw] max-h-[280px]"
                 style={{ color: 'transparent' }}
-                src="/profile-ghibli.jpg"
+                src="/fullprofpic.jpg"
               />
             </div>
             <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground text-center max-w-2xl mb-8 px-2 sm:px-0 break-words">
