@@ -44,6 +44,7 @@ export default function RootLayout({
 }
 
 export const metadata = {
+  metadataBase: new URL("https://jmmlabs.xyz/"),
   title: "Jacob Meyer | JMM LABS",
   description:
     "Showcasing a passion for building innovative products, making the world better, solving real problems, spreading love and happiness, and embracing lifelong learning—welcome to JMM LABS.",
