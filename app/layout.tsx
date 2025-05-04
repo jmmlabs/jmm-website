@@ -59,9 +59,12 @@ export default function RootLayout({
 
 export const metadata = {
   metadataBase: new URL("https://jmmlabs.xyz/"),
-  title: "Jacob Meyer | JMM LABS",
+  title: {
+    default: "Jacob Meyer | JMM LABS (v2 test 2025-05-04)",
+    template: "%s | JMM LABS (v2 test 2025-05-04)"
+  },
   description:
-    "Showcasing a passion for building innovative products, making the world better, solving real problems, spreading love and happiness, and embracing lifelong learning—welcome to JMM LABS.",
+    "Showcasing a passion for building innovative products, making the world better, solving real problems, spreading love and happiness, and embracing lifelong learning—welcome to JMM LABS. (v2 test 2025-05-04)",
   generator: "v0.dev",
   keywords: [
     "Jacob Meyer",
@@ -74,9 +77,9 @@ export const metadata = {
     "learning"
   ],
   openGraph: {
-    title: "Jacob Meyer | JMM LABS",
+    title: "Jacob Meyer | JMM LABS (v2 test 2025-05-04)",
     description:
-      "Showcasing a passion for building innovative products, making the world better, solving real problems, spreading love and happiness, and embracing lifelong learning—welcome to JMM LABS.",
+      "Showcasing a passion for building innovative products, making the world better, solving real problems, spreading love and happiness, and embracing lifelong learning—welcome to JMM LABS. (v2 test 2025-05-04)",
     url: "https://jmmlabs.xyz/",
     siteName: "JMM LABS",
     images: [
@@ -93,9 +96,9 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     site: "@Jacob___Meyer",
-    title: "Jacob Meyer | JMM LABS",
+    title: "Jacob Meyer | JMM LABS (v2 test 2025-05-04)",
     description:
-      "Showcasing a passion for building innovative products, making the world better, solving real problems, spreading love and happiness, and embracing lifelong learning—welcome to JMM LABS.",
+      "Showcasing a passion for building innovative products, making the world better, solving real problems, spreading love and happiness, and embracing lifelong learning—welcome to JMM LABS. (v2 test 2025-05-04)",
     images: [
       {
         url: "https://jmmlabs.xyz/og-image.jpg",
