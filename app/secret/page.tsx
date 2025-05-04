@@ -45,19 +45,18 @@ export default function SecretPage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-start py-10 px-4 bg-background text-foreground">
-      {/* Back Button */}
-      <button
-        type="button"
-        onClick={() => router.back()}
-        className="fixed top-4 left-2 sm:top-6 sm:left-6 px-3 py-2 sm:px-4 sm:py-2 rounded-lg bg-card/80 text-foreground border border-border shadow hover:bg-muted transition-colors focus:outline-none focus:ring-2 focus:ring-primary/60 backdrop-blur-sm text-sm sm:text-base"
-        style={{ zIndex: 20 }}
-        aria-label="Go back"
-      >
-        <span className="text-base sm:text-lg">←</span>
-        <span className="ml-1 font-bold tracking-wide hidden md:inline" style={{ letterSpacing: 2, textTransform: 'uppercase' }}>BACK</span>
-      </button>
       <h1 className="text-3xl md:text-4xl font-bold text-center mb-8 mt-4">SECRET PAGE</h1>
       <div className="w-full max-w-md flex flex-col items-center relative min-h-[220px]">
+        {/* Back Button at top of content, scrolls away */}
+        <button
+          type="button"
+          onClick={() => router.back()}
+          className="mt-4 ml-2 sm:mt-6 sm:ml-6 px-3 py-2 sm:px-4 sm:py-2 rounded-lg bg-card/80 text-foreground border border-border shadow hover:bg-muted transition-colors focus:outline-none focus:ring-2 focus:ring-primary/60 backdrop-blur-sm text-sm sm:text-base"
+          aria-label="Go back"
+        >
+          <span className="text-base sm:text-lg">←</span>
+          <span className="ml-1 font-bold tracking-wide hidden md:inline" style={{ letterSpacing: 2, textTransform: 'uppercase' }}>BACK</span>
+        </button>
         {/* Placeholder image */}
         <div className="w-full aspect-square bg-muted rounded-xl flex items-center justify-center mb-6 overflow-hidden">
           <img
