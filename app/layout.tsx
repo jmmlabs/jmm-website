@@ -13,20 +13,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        {/* WebSite JSON-LD for Google Rich Results */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "WebSite",
-              "name": "JMM LABS",
-              "url": "https://jmmlabs.xyz/"
-            })
-          }}
-        />
-      </head>
       <body className={inter.className}>
         <script
           type="application/ld+json"

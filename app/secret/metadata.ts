@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     description: "Unlock the secret with Frisc the Secret Keeper.",
     images: [
       {
-        url: "/frisc-secret-keeper.png",
+        url: "https://jmmlabs.xyz/frisc-secret-keeper.png",
         width: 800,
         height: 800,
         alt: "Frisc the Secret Keeper"
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     description: "Unlock the secret with Frisc the Secret Keeper.",
     images: [
       {
-        url: "/frisc-secret-keeper.png",
+        url: "https://jmmlabs.xyz/frisc-secret-keeper.png",
         width: 800,
         height: 800,
         alt: "Frisc the Secret Keeper"
@@ -29,5 +29,3 @@ export const metadata: Metadata = {
     ]
   }
 };
-
-export default metadata;
