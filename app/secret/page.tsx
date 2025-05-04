@@ -45,6 +45,16 @@ export default function SecretPage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-start py-10 px-4 bg-background text-foreground">
+      {/* Back Button */}
+      <button
+        type="button"
+        onClick={() => router.back()}
+        className="absolute top-6 left-6 px-4 py-2 rounded-lg bg-card/80 text-foreground border border-border shadow hover:bg-muted transition-colors focus:outline-none focus:ring-2 focus:ring-primary/60"
+        style={{ zIndex: 20 }}
+        aria-label="Go back"
+      >
+        <span className="text-lg">←</span> <span className="ml-1 font-bold tracking-wide" style={{ letterSpacing: 2, textTransform: 'uppercase' }}>BACK</span>
+      </button>
       <h1 className="text-3xl md:text-4xl font-bold text-center mb-8 mt-4">SECRET PAGE</h1>
       <div className="w-full max-w-md flex flex-col items-center relative min-h-[220px]">
         {/* Placeholder image */}
