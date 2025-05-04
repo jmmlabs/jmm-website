@@ -25,51 +25,58 @@ interface TimelineModalProps {
   }[];
 }
 
-const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, currentIdx, total, onPrev, onNext, events }) => {
+const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, currentIdx: initialIdx, total, onPrev, onNext, events }) => {
   const modalRef = useRef<HTMLDivElement>(null);
+  // Central state for current event and image
+  const [currentIdx, setCurrentIdx] = useState(initialIdx);
   const [selectedImgIdx, setSelectedImgIdx] = useState(0);
   const [fade, setFade] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
 
-  // Defensive: If card.images is missing, not an array, or contains only empty/falsey values, fallback to a placeholder or close modal
-  const validImages = Array.isArray(card.images)
-    ? card.images.filter(img => typeof img === "string" && img.trim() !== "")
-    : [];
-  if (validImages.length === 0) {
+  // Defensive: If no events or no images in current event, fallback to null
+  const validEvents = events.map(ev => ({
+    ...ev,
+    images: Array.isArray(ev.images) ? ev.images.filter(img => typeof img === "string" && img.trim() !== "") : []
+  }));
+  const currentEvent = validEvents[currentIdx] || { images: [] };
+  const validImages = currentEvent.images;
+  if (!validImages || validImages.length === 0) {
     return null;
   }
 
-  // Reset image index when card changes
   useEffect(() => {
+    setCurrentIdx(initialIdx);
     setSelectedImgIdx(0);
     setFullscreen(false);
-  }, [card]);
+  }, [card, initialIdx]);
 
-  // Focus trap and ESC/backdrop handling
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen || fullscreen) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
       if (e.key === "ArrowLeft") {
-        if (validImages.length > 1 && selectedImgIdx > 0) {
+        if (selectedImgIdx > 0) {
           setFade(true);
           setTimeout(() => {
             setSelectedImgIdx(selectedImgIdx - 1);
             setFade(false);
           }, 160);
         } else if (currentIdx > 0) {
-          onPrev();
+          setCurrentIdx(currentIdx - 1);
+          // Set to last image of previous event
+          setSelectedImgIdx(validEvents[currentIdx - 1]?.images.length - 1 || 0);
         }
       }
       if (e.key === "ArrowRight") {
-        if (validImages.length > 1 && selectedImgIdx < validImages.length - 1) {
+        if (selectedImgIdx < validImages.length - 1) {
           setFade(true);
           setTimeout(() => {
             setSelectedImgIdx(selectedImgIdx + 1);
             setFade(false);
           }, 160);
-        } else if (currentIdx < total - 1) {
-          onNext();
+        } else if (currentIdx < validEvents.length - 1) {
+          setCurrentIdx(currentIdx + 1);
+          setSelectedImgIdx(0);
         }
       }
     };
@@ -79,7 +86,7 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
       document.body.style.overflow = "";
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isOpen, onClose, onPrev, onNext, currentIdx, total, validImages, selectedImgIdx]);
+  }, [isOpen, fullscreen, onClose, currentIdx, validEvents, validImages, selectedImgIdx]);
 
   // Preload adjacent images
   useEffect(() => {
@@ -148,7 +155,7 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
                   >
                     <Image
                       src={validImages[selectedImgIdx]}
-                      alt={`${card.title || 'Event'} - Image ${selectedImgIdx + 1}`}
+                      alt={`${currentEvent.title || 'Event'} - Image ${selectedImgIdx + 1}`}
                       width={960}
                       height={600}
                       className="rounded-2xl object-contain w-full h-full bg-background"
@@ -175,7 +182,7 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
                     >
                       <Image
                         src={img}
-                        alt={`${card.title || 'Event'} - Thumbnail ${idx + 1}`}
+                        alt={`${currentEvent.title || 'Event'} - Thumbnail ${idx + 1}`}
                         width={90}
                         height={60}
                         className="object-contain w-full h-full rounded-lg"
@@ -188,22 +195,27 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
               )}
               {/* Title & Description */}
               <h2 className="text-2xl font-bold text-center mt-4 mb-2 text-foreground w-full break-words">
-                {card.title}
+                {currentEvent.title}
               </h2>
               <div className="text-base md:text-lg text-muted-foreground mb-2 text-center w-full max-w-2xl break-words">
-                {card.description}
+                {currentEvent.description}
               </div>
               {/* Date */}
               <div
                 className="inline-block text-base md:text-lg font-semibold text-primary bg-primary/10 px-3 py-1 mt-2 mb-1 text-center w-auto rounded-full tracking-wide shadow-sm"
                 style={{ letterSpacing: '0.02em' }}
               >
-                {new Date(card.date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
+                {new Date(currentEvent.date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
               </div>
               {/* Navigation Arrows */}
               <div className="flex flex-row items-center justify-between w-full mt-4">
                 <button
-                  onClick={onPrev}
+                  onClick={() => {
+                    if (currentIdx > 0) {
+                      setCurrentIdx(currentIdx - 1);
+                      setSelectedImgIdx(validEvents[currentIdx - 1]?.images.length - 1 || 0);
+                    }
+                  }}
                   disabled={currentIdx === 0}
                   className="px-4 py-2 rounded-lg bg-muted text-muted-foreground hover:bg-border disabled:opacity-40"
                   aria-label="Previous event"
@@ -211,8 +223,13 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
                   ← Prev
                 </button>
                 <button
-                  onClick={onNext}
-                  disabled={currentIdx === total - 1}
+                  onClick={() => {
+                    if (currentIdx < validEvents.length - 1) {
+                      setCurrentIdx(currentIdx + 1);
+                      setSelectedImgIdx(0);
+                    }
+                  }}
+                  disabled={currentIdx === validEvents.length - 1}
                   className="px-4 py-2 rounded-lg bg-muted text-muted-foreground hover:bg-border disabled:opacity-40"
                   aria-label="Next event"
                 >
@@ -234,23 +251,12 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
       <FullscreenGallery
         isOpen={fullscreen}
         onClose={() => setFullscreen(false)}
-        events={events.map(ev => ({
-          ...ev,
-          images: Array.isArray(ev.images)
-            ? ev.images.filter(img => typeof img === "string" && img.trim() !== "")
-            : []
-        }))}
+        events={validEvents}
         eventIdx={currentIdx}
         imageIdx={selectedImgIdx}
         onNavigate={(eventIdx, imageIdx) => {
-          if (eventIdx !== currentIdx) {
-            // Move to new event (modal navigation)
-            if (eventIdx > currentIdx) onNext();
-            else onPrev();
-            setSelectedImgIdx(imageIdx);
-          } else {
-            setSelectedImgIdx(imageIdx);
-          }
+          setCurrentIdx(eventIdx);
+          setSelectedImgIdx(imageIdx);
         }}
       />
     </>
