@@ -166,31 +166,33 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
               </AnimatePresence>
               {/* Thumbnails row (only if multiple images) */}
               {validImages.length > 1 && (
-                <div className="flex flex-row gap-2 mt-3 w-full overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent">
-                  {validImages.slice(0, 5).map((img, idx) => (
-                    <motion.button
-                      key={`thumb-${currentIdx}-${idx}`}
-                      onClick={() => handleThumbnailClick(idx)}
-                      className={`border-2 rounded-lg focus:outline-none ${selectedImgIdx === idx ? 'border-primary shadow-md' : 'border-border opacity-80 hover:opacity-100'} flex-shrink-0 transition-all duration-400`}
-                      style={{ height: 60, width: 90, minWidth: 60, transition: 'border-color 0.16s cubic-bezier(0.4,0,0.2,1), box-shadow 0.16s cubic-bezier(0.4,0,0.2,1), opacity 0.09s' }}
-                      aria-label={`Show image ${idx + 1}`}
-                      tabIndex={0}
-                      initial={{ opacity: 0, scale: 0.97 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 1.03 }}
-                      transition={{ duration: 0.16, ease: 'easeInOut' }} // Faster thumbnail transition
-                    >
-                      <Image
-                        src={img}
-                        alt={`${currentEvent.title || 'Event'} - Thumbnail ${idx + 1}`}
-                        width={90}
-                        height={60}
-                        className="object-contain w-full h-full rounded-lg"
-                        loading={Math.abs(selectedImgIdx - idx) <= 1 ? 'eager' : 'lazy'}
-                        draggable={false}
-                      />
-                    </motion.button>
-                  ))}
+                <div className="w-full flex justify-center">
+                  <div className="flex flex-row gap-2 mt-3 max-w-full overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent justify-center">
+                    {validImages.slice(0, 5).map((img, idx) => (
+                      <motion.button
+                        key={`thumb-${currentIdx}-${idx}`}
+                        onClick={() => handleThumbnailClick(idx)}
+                        className={`border-2 rounded-lg focus:outline-none ${selectedImgIdx === idx ? 'border-primary shadow-md' : 'border-border opacity-80 hover:opacity-100'} flex-shrink-0 transition-all duration-400`}
+                        style={{ height: 60, width: 90, minWidth: 60, transition: 'border-color 0.16s cubic-bezier(0.4,0,0.2,1), box-shadow 0.16s cubic-bezier(0.4,0,0.2,1), opacity 0.09s' }}
+                        aria-label={`Show image ${idx + 1}`}
+                        tabIndex={0}
+                        initial={{ opacity: 0, scale: 0.97 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 1.03 }}
+                        transition={{ duration: 0.16, ease: 'easeInOut' }} // Faster thumbnail transition
+                      >
+                        <Image
+                          src={img}
+                          alt={`${currentEvent.title || 'Event'} - Thumbnail ${idx + 1}`}
+                          width={90}
+                          height={60}
+                          className="object-contain w-full h-full rounded-lg"
+                          loading={Math.abs(selectedImgIdx - idx) <= 1 ? 'eager' : 'lazy'}
+                          draggable={false}
+                        />
+                      </motion.button>
+                    ))}
+                  </div>
                 </div>
               )}
               {/* Title & Description */}
