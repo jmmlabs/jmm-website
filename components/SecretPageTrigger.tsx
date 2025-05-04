@@ -7,13 +7,13 @@ const IMAGE_SRC = "/small-easter-egg-frisco.png";
 const DIAGONAL_DISTANCE = 120; // px, how far the image slides in/out
 
 const isTouchDevice = () =>
-  "ontouchstart" in window ||
-  navigator.maxTouchPoints > 0;
+  typeof window !== "undefined" && ("ontouchstart" in window || navigator.maxTouchPoints > 0);
 
 const SecretPageTrigger: React.FC = () => {
   const [visible, setVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const imageRef = useRef<HTMLImageElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
   // Detect mobile/touch device
@@ -26,8 +26,8 @@ const SecretPageTrigger: React.FC = () => {
     if (!isMobile || !visible) return;
     const handleClick = (e: MouseEvent) => {
       if (
-        imageRef.current &&
-        !imageRef.current.contains(e.target as Node)
+        wrapperRef.current &&
+        !wrapperRef.current.contains(e.target as Node)
       ) {
         setVisible(false);
       }
@@ -36,6 +36,33 @@ const SecretPageTrigger: React.FC = () => {
     return () => document.removeEventListener("mousedown", handleClick);
   }, [isMobile, visible]);
 
+  // Hide on route change (mobile only)
+  useEffect(() => {
+    if (!isMobile) return;
+    const handleRouteChange = () => setVisible(false);
+    // Listen to Next.js router events
+    // next/navigation's router does not expose events, so use popstate as a workaround
+    window.addEventListener("popstate", handleRouteChange);
+    // Also hide on pushState/replaceState via monkey-patch (best-effort)
+    const origPushState = window.history.pushState;
+    const origReplaceState = window.history.replaceState;
+    window.history.pushState = function (...args) {
+      handleRouteChange();
+      // @ts-ignore
+      return origPushState.apply(this, args);
+    };
+    window.history.replaceState = function (...args) {
+      handleRouteChange();
+      // @ts-ignore
+      return origReplaceState.apply(this, args);
+    };
+    return () => {
+      window.removeEventListener("popstate", handleRouteChange);
+      window.history.pushState = origPushState;
+      window.history.replaceState = origReplaceState;
+    };
+  }, [isMobile]);
+
   // Keyboard accessibility
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter" || e.key === " ") {
@@ -43,19 +70,41 @@ const SecretPageTrigger: React.FC = () => {
     }
   };
 
+  // --- FIX: Mobile tap logic ---
+  const handleWrapperClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!isMobile) return;
+    if (!visible) {
+      setVisible(true);
+    } else {
+      // If visible and tap is on the image, navigate
+      if (
+        imageRef.current &&
+        imageRef.current.contains(e.target as Node)
+      ) {
+        router.push("/secret");
+      }
+      // If visible and tap is elsewhere inside the wrapper, do nothing (let outside click handler hide)
+    }
+  };
+
+  // Desktop: clicking image always navigates
   const handleImageClick = () => {
-    router.push("/secret");
+    if (!isMobile) {
+      router.push("/secret");
+    }
+    // On mobile, navigation handled by wrapper click logic
   };
 
   return (
     <>
       {/* Wrapper for hotspot and image to prevent stutter */}
       <div
+        ref={wrapperRef}
         onMouseEnter={!isMobile ? () => setVisible(true) : undefined}
         onMouseLeave={!isMobile ? () => setVisible(false) : undefined}
         onFocus={!isMobile ? () => setVisible(true) : undefined}
         onBlur={!isMobile ? () => setVisible(false) : undefined}
-        onTouchStart={isMobile ? () => setVisible((v) => !v) : undefined}
+        onClick={handleWrapperClick}
         tabIndex={0}
         aria-label="Open secret cat image"
         style={{
