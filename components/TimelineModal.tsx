@@ -129,7 +129,7 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
                   alt={`${card.title} - Image ${selectedImgIdx + 1}`}
                   width={960}
                   height={600}
-                  className="rounded-2xl object-cover w-full h-full"
+                  className="rounded-2xl object-contain w-full h-full bg-background"
                   priority
                 />
               </motion.div>

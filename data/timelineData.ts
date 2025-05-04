@@ -12,18 +12,20 @@ export const timelineData: TimelineEvent[] = [
     title: "Meet Cute",
     description: "Jacob spots Hannah from across the bar and a golden ray of light shines down on her stylish gray outfit. He approaches her and learns about her love for swamp water martinis, her handsome cat, Monkey Boy, and that she is unfortunately seeing someone at the time. Jacob knows he can't miss this once in a lifetime opportunity and somehow persists to get her number. Once this tremendous feat has been accomplished he knows his work is done and he can promptly leaves, smiling all the way home, hoping they will meet again one day.",
     images: [
-      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1454023492550-5696f8ff10e1?auto=format&fit=crop&w=800&q=80"
+      "/hannah-timeline/01-meet-cute/img1-speed-dating.jpg",
+      "/hannah-timeline/01-meet-cute/img2-first-text.jpg",
+      "/hannah-timeline/01-meet-cute/img3-julia-eric-text.jpg"
     ],
     date: "2024-10-16",
   },
   {
     title: "Our First Date",
     description: "After months of patiently waiting, back and forth over Hinge and text, multiple flat tires, and a Dallaskan snow storm, Jacob and Hannah finally get to reconnect for their first date over martinis at Hudson House and share their first kiss in the chilly parking lot as Jacob fills up Hannah's tires and wishes her a safe drive home.",
-    images: ["https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80"],
+    images: [
+      "/hannah-timeline/02-first-date/img1-hudson-house.png",
+      "/hannah-timeline/02-first-date/img2-frisc-first-look.jpg",
+      "/hannah-timeline/02-first-date/img3-fortune.jpg"
+    ],
     date: "2025-01-10",
   },
   {
