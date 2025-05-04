@@ -1,6 +1,6 @@
 "use client"
 import React, { useRef, useEffect, useState } from "react";
-import { timelineData } from "../data/timelineData";
+import { getValidatedTimelineData } from "../data/timelineData";
 import TimelineCard from "./TimelineCard";
 import TimelineModal from "./TimelineModal";
 import { motion } from "framer-motion";
@@ -8,7 +8,7 @@ import { useInView } from "react-intersection-observer";
 
 export default function Timeline() {
   // Sort events by date ascending
-  const sorted = [...timelineData].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  const sorted = [...getValidatedTimelineData()].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   // Refs for first and last dot (for future-proofing, but not needed for segmented line)
   const timelineWrapperRef = useRef<HTMLDivElement>(null);
@@ -95,6 +95,7 @@ export default function Timeline() {
         total={sorted.length}
         onPrev={prevModal}
         onNext={nextModal}
+        events={sorted}
       />
     </section>
   );

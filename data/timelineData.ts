@@ -89,3 +89,12 @@ export const timelineData: TimelineEvent[] = [
     date: "2025-04-25",
   },
 ];
+
+// --- Data Validation: Remove empty or duplicate image paths from all timeline events at runtime ---
+export const getValidatedTimelineData = (): TimelineEvent[] => {
+  // Helper to filter out empty/falsey and duplicate image paths per event
+  return timelineData.map(event => ({
+    ...event,
+    images: Array.from(new Set(event.images.filter(img => !!img && img.trim() !== "")))
+  })).filter(event => event.images.length > 0);
+};
