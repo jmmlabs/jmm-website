@@ -27,7 +27,7 @@ const FullscreenGallery: React.FC<FullscreenGalleryProps> = ({
   // Flatten all valid images across all events
   const flatImages = events.flatMap((ev, idx) =>
     Array.isArray(ev.images)
-      ? ev.images.filter(img => typeof img === "string" && img.trim() !== "").map(img => ({ img, eventIdx: idx }))
+      ? ev.images.filter(img => typeof img === "string" && img.trim() !== "").map((img, i) => ({ img, eventIdx: idx, imageIdx: i }))
       : []
   );
   // Find the global index of the current event/image
@@ -38,6 +38,16 @@ const FullscreenGallery: React.FC<FullscreenGalleryProps> = ({
     return null;
   }
 
+  // Prevent double navigation on mobile (touch/click)
+  const lastNavRef = useRef<number>(0);
+  const NAV_DEBOUNCE_MS = 350;
+  const safeNavigate = (eventIdx: number, imageIdx: number) => {
+    const now = Date.now();
+    if (now - lastNavRef.current < NAV_DEBOUNCE_MS) return;
+    lastNavRef.current = now;
+    onNavigate(eventIdx, imageIdx);
+  };
+
   // Keyboard navigation
   useEffect(() => {
     if (!isOpen) return;
@@ -46,13 +56,13 @@ const FullscreenGallery: React.FC<FullscreenGalleryProps> = ({
       if (e.key === "ArrowLeft") {
         if (globalIdx > 0) {
           const prev = flatImages[globalIdx - 1];
-          onNavigate(prev.eventIdx, events[prev.eventIdx].images.findIndex(img => img === prev.img));
+          safeNavigate(prev.eventIdx, prev.imageIdx);
         }
       }
       if (e.key === "ArrowRight") {
         if (globalIdx < globalTotal - 1) {
           const next = flatImages[globalIdx + 1];
-          onNavigate(next.eventIdx, events[next.eventIdx].images.findIndex(img => img === next.img));
+          safeNavigate(next.eventIdx, next.imageIdx);
         }
       }
     };
@@ -62,7 +72,7 @@ const FullscreenGallery: React.FC<FullscreenGalleryProps> = ({
       document.body.style.overflow = "";
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isOpen, onClose, globalIdx, flatImages, events, onNavigate, globalTotal]);
+  }, [isOpen, onClose, globalIdx, flatImages, events, safeNavigate, globalTotal]);
 
   // Touch/swipe navigation
   useEffect(() => {
@@ -80,13 +90,13 @@ const FullscreenGallery: React.FC<FullscreenGalleryProps> = ({
         // Swipe left (next)
         if (globalIdx < globalTotal - 1) {
           const next = flatImages[globalIdx + 1];
-          onNavigate(next.eventIdx, events[next.eventIdx].images.findIndex(img => img === next.img));
+          safeNavigate(next.eventIdx, next.imageIdx);
         }
       } else if (endX - startX > 60) {
         // Swipe right (prev)
         if (globalIdx > 0) {
           const prev = flatImages[globalIdx - 1];
-          onNavigate(prev.eventIdx, events[prev.eventIdx].images.findIndex(img => img === prev.img));
+          safeNavigate(prev.eventIdx, prev.imageIdx);
         }
       }
     };
@@ -103,7 +113,7 @@ const FullscreenGallery: React.FC<FullscreenGalleryProps> = ({
         node.removeEventListener("touchend", handleTouchEnd);
       }
     };
-  }, [isOpen, globalIdx, flatImages, events, onNavigate, globalTotal]);
+  }, [isOpen, globalIdx, flatImages, events, safeNavigate, globalTotal]);
 
   // Close on backdrop click
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -155,7 +165,7 @@ const FullscreenGallery: React.FC<FullscreenGalleryProps> = ({
             onClick={() => {
               if (globalIdx > 0) {
                 const prev = flatImages[globalIdx - 1];
-                onNavigate(prev.eventIdx, events[prev.eventIdx].images.findIndex(img => img === prev.img));
+                safeNavigate(prev.eventIdx, prev.imageIdx);
               }
             }}
             className="absolute left-2 md:left-8 top-1/2 -translate-y-1/2 text-4xl text-white/70 hover:text-white px-2 py-1 rounded-full focus:outline-none z-10"
@@ -168,7 +178,7 @@ const FullscreenGallery: React.FC<FullscreenGalleryProps> = ({
             onClick={() => {
               if (globalIdx < globalTotal - 1) {
                 const next = flatImages[globalIdx + 1];
-                onNavigate(next.eventIdx, events[next.eventIdx].images.findIndex(img => img === next.img));
+                safeNavigate(next.eventIdx, next.imageIdx);
               }
             }}
             className="absolute right-2 md:right-8 top-1/2 -translate-y-1/2 text-4xl text-white/70 hover:text-white px-2 py-1 rounded-full focus:outline-none z-10"
@@ -181,7 +191,7 @@ const FullscreenGallery: React.FC<FullscreenGalleryProps> = ({
           {/* Main Image */}
           {flatImages[globalIdx] && (
             <motion.div
-              key={`fullscreen-img-${flatImages[globalIdx].eventIdx}-${events[flatImages[globalIdx].eventIdx].images.findIndex(img => img === flatImages[globalIdx].img)}`}
+              key={`fullscreen-img-${flatImages[globalIdx].eventIdx}-${flatImages[globalIdx].imageIdx}`}
               initial={{ opacity: 0.7, scale: 1.01 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0.7, scale: 0.99 }}
@@ -190,7 +200,7 @@ const FullscreenGallery: React.FC<FullscreenGalleryProps> = ({
             >
               <Image
                 src={flatImages[globalIdx].img}
-                alt={`${events[flatImages[globalIdx].eventIdx].title} - Fullscreen Image ${events[flatImages[globalIdx].eventIdx].images.findIndex(img => img === flatImages[globalIdx].img) + 1}`}
+                alt={`${events[flatImages[globalIdx].eventIdx].title} - Fullscreen Image ${flatImages[globalIdx].imageIdx + 1}`}
                 width={1600}
                 height={1000}
                 className="object-contain w-full h-full max-h-[90vh] max-w-[95vw] bg-black rounded-2xl shadow-lg select-none"
