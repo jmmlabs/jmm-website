@@ -117,6 +117,9 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
     }
   };
 
+  // Helper to detect mobile
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
   return (
     <>
       <AnimatePresence>
@@ -226,14 +229,29 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
                 </button>
                 <button
                   onClick={() => {
-                    if (currentIdx < validEvents.length - 1) {
-                      setCurrentIdx(currentIdx + 1);
-                      setSelectedImgIdx(0);
+                    if (isMobile) {
+                      // Mobile: Scroll through images before advancing event
+                      if (selectedImgIdx < validImages.length - 1) {
+                        setFade(true);
+                        setTimeout(() => {
+                          setSelectedImgIdx(selectedImgIdx + 1);
+                          setFade(false);
+                        }, 160);
+                      } else if (currentIdx < validEvents.length - 1) {
+                        setCurrentIdx(currentIdx + 1);
+                        setSelectedImgIdx(0);
+                      }
+                    } else {
+                      // Desktop: Advance event as before
+                      if (currentIdx < validEvents.length - 1) {
+                        setCurrentIdx(currentIdx + 1);
+                        setSelectedImgIdx(0);
+                      }
                     }
                   }}
-                  disabled={currentIdx === validEvents.length - 1}
+                  disabled={isMobile ? (currentIdx === validEvents.length - 1 && selectedImgIdx === validImages.length - 1) : (currentIdx === validEvents.length - 1)}
                   className="px-4 py-2 rounded-lg bg-muted text-muted-foreground hover:bg-border disabled:opacity-40"
-                  aria-label="Next event"
+                  aria-label="Next"
                 >
                   Next →
                 </button>
