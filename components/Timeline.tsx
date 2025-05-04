@@ -60,16 +60,17 @@ export default function Timeline() {
                 {idx % 2 === 0 && <TimelineCard {...event} side="left" idx={idx} forwardedRef={ref} inView={inView} />}
               </div>
               {/* Center column: timeline dot and vertical line */}
-              <div className="flex flex-col items-center justify-center relative min-h-[140px] z-10">
-                {/* Vertical line segment for all but first and last dot */}
+              <div className="flex flex-col items-center h-full min-h-[80px] md:min-h-[140px] z-10">
+                {/* Vertical line segment for all but first dot */}
                 {idx !== 0 && (
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 bg-border z-0" style={{ height: '50%' }} />
-                )}
-                {idx !== sorted.length - 1 && (
-                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-2 bg-border z-0" style={{ height: '50%' }} />
+                  <div className="w-2 flex-grow bg-border" />
                 )}
                 {/* Dot */}
-                <div className="w-5 h-5 bg-background border-4 border-border rounded-full relative z-10 mt-0" />
+                <div className="w-5 h-5 bg-background border-4 border-border rounded-full z-10" />
+                {/* Vertical line segment for all but last dot */}
+                {idx !== sorted.length - 1 && (
+                  <div className="w-2 flex-grow bg-border" />
+                )}
               </div>
               {/* Right column (odd idx) */}
               <div className={`flex justify-start items-center min-h-[140px] snap-start ${idx % 2 === 1 ? '' : 'invisible'}`}
