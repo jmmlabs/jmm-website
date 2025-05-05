@@ -2,9 +2,33 @@ import "@/styles/globals.css"
 import { Inter } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
 import SecretPageTrigger from "@/components/SecretPageTrigger";
-import type React from "react" // Added import for React
+import type React from "react"
 
 const inter = Inter({ subsets: ["latin"] })
+
+// Precompute JSON-LD outside of the component to ensure deterministic SSR/CSR output
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "JMM LABS",
+  "url": "https://jmmlabs.xyz/"
+};
+const personJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Jacob Meyer",
+  "image": "https://jmmlabs.xyz/jacob.jpg",
+  "sameAs": [
+    "https://twitter.com/jmmxyz",
+    "https://www.linkedin.com/in/jacob-meyer-7a4b6b1a5/"
+  ],
+  "jobTitle": "Product Designer / Builder",
+  "worksFor": {
+    "@type": "Organization",
+    "name": "JMM LABS"
+  },
+  "description": "Showcasing a passion for building innovative products, making the world better, solving real problems, spreading love and happiness, and embracing lifelong learning—welcome to JMM LABS."
+};
 
 export default function RootLayout({
   children,
@@ -16,40 +40,23 @@ export default function RootLayout({
       <head>
         {/* WebSite JSON-LD for Google Rich Results */}
         <script
+          key="website-jsonld"
           type="application/ld+json"
+          suppressHydrationWarning
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "WebSite",
-              "name": "JMM LABS",
-              "url": "https://jmmlabs.xyz/"
-            })
+            __html: JSON.stringify(websiteJsonLd)
+          }}
+        />
+        <script
+          key="person-jsonld"
+          type="application/ld+json"
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(personJsonLd)
           }}
         />
       </head>
-      <body className={inter.className}>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "Person",
-              "name": "Jacob Meyer",
-              "url": "https://jmmlabs.xyz/",
-              "image": "https://jmmlabs.xyz/og-image.jpg",
-              "sameAs": [
-                "https://twitter.com/Jacob___Meyer",
-                "https://www.linkedin.com/in/jacobmatthewmeyer/"
-              ],
-              "jobTitle": "Product Designer / Builder",
-              "worksFor": {
-                "@type": "Organization",
-                "name": "JMM LABS"
-              },
-              "description": "Showcasing a passion for building innovative products, making the world better, solving real problems, spreading love and happiness, and embracing lifelong learning—welcome to JMM LABS."
-            })
-          }}
-        />
+      <body className={inter.className} suppressHydrationWarning>
         <ThemeProvider>{children}</ThemeProvider>
         <SecretPageTrigger />
       </body>

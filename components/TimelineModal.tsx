@@ -32,6 +32,7 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
   const [selectedImgIdx, setSelectedImgIdx] = useState(0);
   const [fade, setFade] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   // Defensive: If no events or no images in current event, fallback to null
   const validEvents = events.map(ev => ({
@@ -49,6 +50,10 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
     setSelectedImgIdx(0);
     setFullscreen(false);
   }, [card, initialIdx]);
+
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 768);
+  }, []);
 
   useEffect(() => {
     if (!isOpen || fullscreen) return;
@@ -117,8 +122,11 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
     }
   };
 
-  // Helper to detect mobile
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  function formatDate(dateString: string) {
+    // Always format in UTC to avoid SSR/CSR mismatch
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" });
+  }
 
   return (
     <>
@@ -210,7 +218,7 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
                 className="inline-block text-base md:text-lg font-semibold text-primary bg-primary/10 px-3 py-1 mt-2 mb-1 text-center w-auto rounded-full tracking-wide shadow-sm"
                 style={{ letterSpacing: '0.02em' }}
               >
-                {new Date(currentEvent.date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
+                {formatDate(currentEvent.date)}
               </div>
               {/* Navigation Arrows */}
               <div className="flex flex-row items-center justify-between w-full mt-4">

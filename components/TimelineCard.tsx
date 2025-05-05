@@ -16,6 +16,18 @@ export interface TimelineCardProps {
 
 const FIRST_VIEWPORT_COUNT = 4; // Number of cards likely in first viewport
 
+// Deterministic UTC date formatting helpers
+function formatMonthUTC(dateString: string) {
+  const date = new Date(dateString);
+  return date.toLocaleString('en-US', { month: 'short', timeZone: 'UTC' }).toUpperCase();
+}
+function formatDayUTC(dateString: string) {
+  return new Date(dateString).getUTCDate();
+}
+function formatYearUTC(dateString: string) {
+  return new Date(dateString).getUTCFullYear();
+}
+
 export const TimelineCard: React.FC<TimelineCardProps> = ({ title, description, images, date, side, idx = 0, inView = false, forwardedRef }) => {
   // Animation timing logic
   const isFirstBatch = idx < FIRST_VIEWPORT_COUNT;
@@ -59,9 +71,9 @@ export const TimelineCard: React.FC<TimelineCardProps> = ({ title, description, 
         </div>
         {/* Date: always visible, centered on xs */}
         <div className="flex flex-col items-center min-w-[54px] w-auto md:w-auto justify-center order-2 md:order-none mt-2 md:mt-0">
-          <span className="text-xs text-muted-foreground">{new Date(date).toLocaleString('en-US', { month: 'short' }).toUpperCase()}</span>
-          <span className="font-bold text-xl text-foreground">{new Date(date).getDate()}</span>
-          <span className="text-xs text-muted-foreground">{new Date(date).getFullYear()}</span>
+          <span className="text-xs text-muted-foreground">{formatMonthUTC(date)}</span>
+          <span className="font-bold text-xl text-foreground">{formatDayUTC(date)}</span>
+          <span className="text-xs text-muted-foreground">{formatYearUTC(date)}</span>
         </div>
       </motion.div>
     </div>

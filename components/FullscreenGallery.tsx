@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 
@@ -84,6 +84,11 @@ const FullscreenGallery: React.FC<FullscreenGalleryProps> = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
+
+  // If you have any SSR-dependent logic, move it to useEffect (none currently found)
+  // If you ever add isMobile or similar, use useEffect+useState pattern as above
+  // No date formatting or non-deterministic code found in this file
+  // No changes needed for hydration in this file
 
   return (
     <AnimatePresence>
