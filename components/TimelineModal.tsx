@@ -216,14 +216,30 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
               <div className="flex flex-row items-center justify-between w-full mt-4">
                 <button
                   onClick={() => {
-                    if (currentIdx > 0) {
-                      setCurrentIdx(currentIdx - 1);
-                      setSelectedImgIdx(validEvents[currentIdx - 1]?.images.length - 1 || 0);
+                    if (isMobile) {
+                      // Mobile: Scroll through images before going to previous event
+                      if (selectedImgIdx > 0) {
+                        setFade(true);
+                        setTimeout(() => {
+                          setSelectedImgIdx(selectedImgIdx - 1);
+                          setFade(false);
+                        }, 160);
+                      } else if (currentIdx > 0) {
+                        const prevEventImages = validEvents[currentIdx - 1]?.images || [];
+                        setCurrentIdx(currentIdx - 1);
+                        setSelectedImgIdx(prevEventImages.length - 1 || 0);
+                      }
+                    } else {
+                      // Desktop: Go to previous event as before
+                      if (currentIdx > 0) {
+                        setCurrentIdx(currentIdx - 1);
+                        setSelectedImgIdx(validEvents[currentIdx - 1]?.images.length - 1 || 0);
+                      }
                     }
                   }}
-                  disabled={currentIdx === 0}
+                  disabled={isMobile ? (currentIdx === 0 && selectedImgIdx === 0) : (currentIdx === 0)}
                   className="px-4 py-2 rounded-lg bg-muted text-muted-foreground hover:bg-border disabled:opacity-40"
-                  aria-label="Previous event"
+                  aria-label="Previous"
                 >
                   ← Prev
                 </button>
