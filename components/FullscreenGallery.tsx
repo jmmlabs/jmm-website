@@ -74,52 +74,6 @@ const FullscreenGallery: React.FC<FullscreenGalleryProps> = ({
     };
   }, [isOpen, onClose, globalIdx, flatImages, events, safeNavigate, globalTotal]);
 
-  // Touch/swipe navigation
-  useEffect(() => {
-    if (!isOpen) return;
-    let startX = 0;
-    let endX = 0;
-    const handleTouchStart = (e: TouchEvent) => {
-      startX = e.touches[0].clientX;
-    };
-    const handleTouchMove = (e: TouchEvent) => {
-      endX = e.touches[0].clientX;
-    };
-    const handleTouchEnd = () => {
-      if (startX - endX > 60) {
-        // Swipe left (next)
-        if (globalIdx < globalTotal - 1) {
-          const next = flatImages[globalIdx + 1];
-          safeNavigate(next.eventIdx, next.imageIdx);
-        }
-      } else if (endX - startX > 60) {
-        // Swipe right (prev)
-        if (globalIdx > 0) {
-          const prev = flatImages[globalIdx - 1];
-          safeNavigate(prev.eventIdx, prev.imageIdx);
-        }
-      }
-    };
-    const node = overlayRef.current;
-    if (node) {
-      node.addEventListener("touchstart", handleTouchStart);
-      node.addEventListener("touchmove", handleTouchMove);
-      node.addEventListener("touchend", handleTouchEnd);
-    }
-    return () => {
-      if (node) {
-        node.removeEventListener("touchstart", handleTouchStart);
-        node.removeEventListener("touchmove", handleTouchMove);
-        node.removeEventListener("touchend", handleTouchEnd);
-      }
-    };
-  }, [isOpen, globalIdx, flatImages, events, safeNavigate, globalTotal]);
-
-  // Close on backdrop click
-  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.target === e.currentTarget) onClose();
-  };
-
   // Progress indicator text
   const globalImageIdx = globalIdx + 1;
 
@@ -142,13 +96,12 @@ const FullscreenGallery: React.FC<FullscreenGalleryProps> = ({
           transition={{ duration: 0.18, ease: "easeInOut" }}
           className="fixed inset-0 z-[999] flex items-center justify-center bg-black/90 backdrop-blur-sm"
           style={{ overscrollBehavior: "contain" }}
-          onMouseDown={handleBackdropClick}
           aria-modal="true"
           role="dialog"
         >
           {/* Close Button */}
           <button
-            onClick={onClose}
+            onClick={e => { e.stopPropagation(); onClose(); }}
             className="absolute top-6 right-8 text-3xl text-white/80 hover:text-white focus:outline-none z-10"
             aria-label="Close fullscreen gallery"
           >
@@ -162,12 +115,7 @@ const FullscreenGallery: React.FC<FullscreenGalleryProps> = ({
 
           {/* Navigation Arrows */}
           <button
-            onClick={() => {
-              if (globalIdx > 0) {
-                const prev = flatImages[globalIdx - 1];
-                safeNavigate(prev.eventIdx, prev.imageIdx);
-              }
-            }}
+            onClick={e => { e.stopPropagation(); if (globalIdx > 0) { const prev = flatImages[globalIdx - 1]; safeNavigate(prev.eventIdx, prev.imageIdx); }}}
             className="absolute left-2 md:left-8 top-1/2 -translate-y-1/2 text-4xl text-white/70 hover:text-white px-2 py-1 rounded-full focus:outline-none z-10"
             aria-label="Previous image"
             style={{ userSelect: "none" }}
@@ -175,12 +123,7 @@ const FullscreenGallery: React.FC<FullscreenGalleryProps> = ({
             ←
           </button>
           <button
-            onClick={() => {
-              if (globalIdx < globalTotal - 1) {
-                const next = flatImages[globalIdx + 1];
-                safeNavigate(next.eventIdx, next.imageIdx);
-              }
-            }}
+            onClick={e => { e.stopPropagation(); if (globalIdx < globalTotal - 1) { const next = flatImages[globalIdx + 1]; safeNavigate(next.eventIdx, next.imageIdx); }}}
             className="absolute right-2 md:right-8 top-1/2 -translate-y-1/2 text-4xl text-white/70 hover:text-white px-2 py-1 rounded-full focus:outline-none z-10"
             aria-label="Next image"
             style={{ userSelect: "none" }}
@@ -197,6 +140,7 @@ const FullscreenGallery: React.FC<FullscreenGalleryProps> = ({
               exit={{ opacity: 0.7, scale: 0.99 }}
               transition={{ duration: 0.15, ease: "easeOut" }}
               className="flex items-center justify-center w-full h-full"
+              onClick={e => e.stopPropagation()}
             >
               <Image
                 src={flatImages[globalIdx].img}
