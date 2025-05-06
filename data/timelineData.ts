@@ -22,7 +22,7 @@ export const timelineData: TimelineEvent[] = [
     title: "Our First Date",
     description: "After months of patiently waiting, back and forth over Hinge and text, multiple flat tires, and a Dallaskan snow storm, Jacob and Hannah finally get to reconnect for their first date over martinis at Hudson House and share their first kiss in the chilly parking lot as Jacob fills up Hannah's tires and wishes her a safe drive home.",
     images: [
-      "/hannah-timeline/02-first-date/img1-hudson-house.png",
+      "/hannah-timeline/02-first-date/img1-hudson-house.jpg",
       "/hannah-timeline/02-first-date/img2-frisc-first-look.jpg",
       "/hannah-timeline/02-first-date/img3-fortune.jpg"
     ],
@@ -31,62 +31,100 @@ export const timelineData: TimelineEvent[] = [
   {
     title: "Hole in One",
     description: "After a tough day day prior and a Blue Velvet pre-game. Hannah showed off her competitive side and golf prowess to made quick work of Jacob with a combined 6 holes in one!! But the best part of the night was yet to come with the drive home and nightcap, sharing special songs, 'In Spite of Ourselves,' and 'Enchanted,' our old school films, creating new memories together, and getting to meet Frisc!!! Hannah might have gotten the holes in one but Jacob was the lucky one :). ",
-    images: ["https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=800&q=80"],
+    images: [
+      "/hannah-timeline/03-hole-in-one/img1-hannah-winner-jacob-loser.jpg",
+      "/hannah-timeline/03-hole-in-one/img3-golf-score.jpg",
+      "/hannah-timeline/03-hole-in-one/img4-text-last-names.jpg",
+      "/hannah-timeline/03-hole-in-one/img5-blue-velvet-poster.jpg"
+    ],
     date: "2025-01-17",
   },
   {
-    title: "Our First Movie",
+    title: "First Vday",
     description: "Companion movie",
-    images: ["https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=800&q=80"],
-    date: "2025-01-30",
-  },
-  {
-    title: "First Valentine's Day",
-    description: "tough then great",
-    images: ["https://images.unsplash.com/photo-1454023492550-5696f8ff10e1?auto=format&fit=crop&w=800&q=80"],
+    images: [
+      "/hannah-timeline/04-first-vday/img1-borderlands-comments.jpg",
+      "/hannah-timeline/04-first-vday/img2-roses.jpg",
+      "/hannah-timeline/04-first-vday/img3-carbone-candle.jpg",
+      "/hannah-timeline/04-first-vday/img4-frisc-toy.jpg"
+    ],
     date: "2025-02-15",
   },
   {
     title: "Exclusive",
     description: "Jacob professes his feelings over Mickey 17",
-    images: ["https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=800&q=80"],
+    images: [
+      "/hannah-timeline/05-exclusive/img1-creeper.jpg",
+      "/hannah-timeline/05-exclusive/img2-mickey17.jpg",
+      "/hannah-timeline/05-exclusive/img3-flix-brewhouse.jpg"
+    ],
     date: "2025-03-12",
   },
   {
-    title: "Hannah Takes St. Patty's",
+    title: "St Patty's",
     description: "Meet all my friends :) almost die because of spicy food - also watched borderlands the night before",
-    images: ["https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80"],
+    images: [
+      "/hannah-timeline/06-st-pattys/img1-hannah-adam-abby.jpg",
+      "/hannah-timeline/06-st-pattys/img2-borderlands-patty.jpg",
+      "/hannah-timeline/06-st-pattys/img3-tarot.jpg"
+    ],
     date: "2025-03-14",
   },
   {
-    title: "Jacob's feelings",
-    description: "sappy",
-    images: ["https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80"],
+    title: "First Airport Trip",
+    description: "tough then great",
+    images: [
+      "/hannah-timeline/07-first-airport-trip/img1-rock.jpg",
+      "/hannah-timeline/07-first-airport-trip/img2-hannah-family.jpg",
+      "/hannah-timeline/07-first-airport-trip/img3-hannah-g.jpg"
+    ],
     date: "2025-04-02",
   },
   {
-    title: "Jacob's revenge",
+    title: "Popstroke",
     description: "most fun date ever, car, cosm, ping pong",
-    images: ["https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=800&q=80"],
+    images: [
+      "/hannah-timeline/08-popstroke/img1-popstroke-ghibli.jpg"
+    ],
     date: "2025-04-12",
   },
   {
     title: "First Joust",
-    description: "new best date ever",
-    images: ["https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=800&q=80"],
+    description: "medieval times",
+    images: [
+      "/hannah-timeline/09-medieval-times/img1-medieval-times.jpg",
+      "/hannah-timeline/09-medieval-times/img4-cleanser.jpeg"
+    ],
     date: "2025-04-19",
-  },
-  {
-    title: "Best Movie Ever",
-    description: "Sinners",
-    images: ["https://images.unsplash.com/photo-1454023492550-5696f8ff10e1?auto=format&fit=crop&w=800&q=80"],
-    date: "2025-04-23",
   },
   {
     title: "Best Call Ever",
     description: "Opening up about past relationships",
-    images: ["https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80"],
+    images: [
+      "/hannah-timeline/10-best-call-ever/img1-phone-ghibli.jpg",
+      "/hannah-timeline/10-best-call-ever/img2-playlist.jpg"
+    ],
+    date: "2025-04-23",
+  },
+  {
+    title: "First Film Together",
+    description: "Sequoia",
+    images: [
+      "/hannah-timeline/11-first-film-together/img1-hannah-light.jpg",
+      "/hannah-timeline/11-first-film-together/img2-hannah-light2.jpg",
+      "/hannah-timeline/11-first-film-together/img3-hannah-under.jpg",
+      "/hannah-timeline/11-first-film-together/img4-hannah-under2.jpg",
+      "/hannah-timeline/11-first-film-together/img5-hannah-scared.jpg"
+    ],
     date: "2025-04-25",
+  },
+  {
+    title: "28th Birthday",
+    description: "Tonight!!",
+    images: [
+      "/hannah-timeline/12-28th-birthday/img1-birthday-ghibli.jpg"
+    ],
+    date: "2025-05-01",
   },
 ];
 
