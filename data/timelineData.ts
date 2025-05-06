@@ -41,7 +41,7 @@ export const timelineData: TimelineEvent[] = [
   },
   {
     title: "First Vday",
-    description: "Companion movie",
+    description: "tough then great",
     images: [
       "/hannah-timeline/04-first-vday/img1-borderlands-comments.jpg",
       "/hannah-timeline/04-first-vday/img2-roses.jpg",
@@ -68,17 +68,17 @@ export const timelineData: TimelineEvent[] = [
       "/hannah-timeline/06-st-pattys/img2-borderlands-patty.jpg",
       "/hannah-timeline/06-st-pattys/img3-tarot.jpg"
     ],
-    date: "2025-03-14",
+    date: "2025-03-15",
   },
   {
     title: "First Airport Trip",
-    description: "tough then great",
+    description: "airport trip",
     images: [
       "/hannah-timeline/07-first-airport-trip/img1-rock.jpg",
       "/hannah-timeline/07-first-airport-trip/img2-hannah-family.jpg",
       "/hannah-timeline/07-first-airport-trip/img3-hannah-g.jpg"
     ],
-    date: "2025-04-02",
+    date: "2025-03-27",
   },
   {
     title: "Popstroke",
@@ -104,7 +104,7 @@ export const timelineData: TimelineEvent[] = [
       "/hannah-timeline/10-best-call-ever/img1-phone-ghibli.jpg",
       "/hannah-timeline/10-best-call-ever/img2-playlist.jpg"
     ],
-    date: "2025-04-23",
+    date: "2025-04-25",
   },
   {
     title: "First Film Together",
@@ -116,7 +116,7 @@ export const timelineData: TimelineEvent[] = [
       "/hannah-timeline/11-first-film-together/img4-hannah-under2.jpg",
       "/hannah-timeline/11-first-film-together/img5-hannah-scared.jpg"
     ],
-    date: "2025-04-25",
+    date: "2025-05-03",
   },
   {
     title: "28th Birthday",
@@ -124,7 +124,7 @@ export const timelineData: TimelineEvent[] = [
     images: [
       "/hannah-timeline/12-28th-birthday/img1-birthday-ghibli.jpg"
     ],
-    date: "2025-05-01",
+    date: "2025-05-10",
   },
 ];
 
