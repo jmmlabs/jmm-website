@@ -2,6 +2,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import ReactMarkdown from "react-markdown";
 
 export interface TimelineCardProps {
   title: string;
@@ -67,7 +68,19 @@ export const TimelineCard: React.FC<TimelineCardProps> = ({ title, description, 
         {/* Title & Description: always shown except xs */}
         <div className="flex flex-col h-full justify-center items-center md:items-start order-1 md:order-none w-full">
           <h3 className="font-bold text-base text-foreground text-center md:text-left w-full">{title}</h3>
-          <p className="text-xs text-muted-foreground w-full overflow-hidden text-ellipsis text-left max-w-full break-words min-w-0 line-clamp-2 max-h-[2.6em] hidden md:block">{description}</p>
+          {/* Render description as markdown for hyperlinks and formatting */}
+          <div className="text-xs text-muted-foreground w-full overflow-hidden text-ellipsis text-left max-w-full break-words min-w-0 line-clamp-2 max-h-[2.6em] hidden md:block">
+            <ReactMarkdown
+              components={{
+                a: ({ node, ...props }) => (
+                  <a {...props} className="underline text-blue-600 hover:text-blue-800 visited:text-purple-600" target="_blank" rel="noopener noreferrer" />
+                ),
+                p: ({ node, ...props }) => <span {...props} />
+              }}
+            >
+              {description}
+            </ReactMarkdown>
+          </div>
         </div>
         {/* Date: always visible, centered on xs */}
         <div className="flex flex-col items-center min-w-[54px] w-auto md:w-auto justify-center order-2 md:order-none mt-2 md:mt-0">
