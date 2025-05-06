@@ -1,4 +1,4 @@
-# Navbar Starting Project
+# JMM Website
 
 ## Overview
 
