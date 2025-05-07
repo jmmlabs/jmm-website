@@ -51,12 +51,20 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
     setCurrentIdx(initialIdx);
     setSelectedImgIdx(0);
     setFullscreen(false);
-    // Birthday animation: only when opening the modal for 'First Birthday Together'
-    if (card?.title === "First Birthday Together" && isOpen) {
+  }, [card, initialIdx]);
+
+  // Confetti animation: trigger when modal is open and current event changes to 'First Birthday Together'
+  const lastConfettiEventTitle = useRef<string | null>(null);
+  useEffect(() => {
+    if (isOpen && currentEvent.title === "First Birthday Together" && lastConfettiEventTitle.current !== currentEvent.title) {
       launchBirthdayConfetti();
+      lastConfettiEventTitle.current = currentEvent.title;
+    } else if (!isOpen) {
+      lastConfettiEventTitle.current = null; // Reset when modal closes
+    } else if (currentEvent.title !== "First Birthday Together") {
+      lastConfettiEventTitle.current = currentEvent.title;
     }
-    // Dependency array is always [card, initialIdx, isOpen]
-  }, [card, initialIdx, isOpen]);
+  }, [isOpen, currentEvent.title]);
 
   useEffect(() => {
     setIsMobile(window.innerWidth < 768);
