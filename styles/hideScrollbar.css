@@ -5,3 +5,16 @@
 .hide-scrollbar::-webkit-scrollbar {
   display: none; /* Chrome, Safari, Opera */
 }
+
+/* Thumbnail navigation spacing */
+.thumbnail-nav-arrow-left {
+  margin-right: 12px !important;
+}
+
+.thumbnail-nav-arrow-right {
+  margin-left: 12px !important;
+}
+
+.thumbnail-container {
+  padding: 0 4px;
+}

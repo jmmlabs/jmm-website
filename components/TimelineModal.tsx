@@ -211,7 +211,7 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
                   <button
                     type="button"
                     aria-label="Previous thumbnail"
-                    className="mx-1 px-2 py-1 rounded-md bg-muted text-muted-foreground shadow hover:bg-border disabled:opacity-40 focus:outline-none"
+                    className="mx-1 px-2 py-1 rounded-md bg-muted text-muted-foreground shadow hover:bg-border disabled:opacity-40 focus:outline-none thumbnail-nav-arrow-left"
                     onClick={() => {
                       if (selectedImgIdx > 0) {
                         setFade(true);
@@ -228,7 +228,7 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
                   </button>
                   {/* Thumbnails row */}
                   <div
-                    className="flex flex-row gap-2 max-w-full overflow-x-auto justify-center items-center hide-scrollbar"
+                    className="flex flex-row gap-2 max-w-full overflow-x-auto justify-center items-center hide-scrollbar thumbnail-container"
                     tabIndex={0}
                     style={{ height: 64, scrollBehavior: 'smooth', padding: 0, margin: 0 }}
                   >
@@ -261,7 +261,7 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
                   <button
                     type="button"
                     aria-label="Next thumbnail"
-                    className="mx-1 px-2 py-1 rounded-md bg-muted text-muted-foreground shadow hover:bg-border disabled:opacity-40 focus:outline-none"
+                    className="mx-1 px-2 py-1 rounded-md bg-muted text-muted-foreground shadow hover:bg-border disabled:opacity-40 focus:outline-none thumbnail-nav-arrow-right"
                     onClick={() => {
                       if (selectedImgIdx < validImages.length - 1) {
                         setFade(true);
