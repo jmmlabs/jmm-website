@@ -122,7 +122,13 @@ export const timelineData: TimelineEvent[] = [
     title: "First Birthday Together",
     description: "And now for today. I know it's not officially your birthday yet, but Hannah Lee Terry, I'm so happy and grateful you made it another trip around the sun, and deeply honored that you'd choose to celebrate it with me. Your gift started off as a Roku-themed Easter egg hunt, since you don't believe Spencer and me when we show you the actual Roku Easter eggs. But it has turned into much more. I've had SOOOO much fun making this for you, even through the countless bugs, especially during a time when I'd lost some of my passion for my previous work. You inspired me to create something that means so much to me. It has been amazing to look back, relive some of our favorite moments together, and document them here for us both. You mean so much to me, and I hope you enjoy this gift even half as much as I enjoyed making it for you. I can't wait to see what's in store for us next! Happy 28th Birthday, Hannah ❤️ Jacob.",
     images: [
-      "/hannah-timeline/12-28th-birthday/img1-birthday-ghibli.jpg"
+      "/hannah-timeline/12-28th-birthday/img1-birthday-ghibli.jpg",
+      "/hannah-timeline/12-28th-birthday/img2-big-footage-films.jpg",
+      "/hannah-timeline/12-28th-birthday/img3-gs-goodies.jpg",
+      "/hannah-timeline/12-28th-birthday/img4-spencer-records.jpg",
+      "/hannah-timeline/12-28th-birthday/img5-mini-golf.jpg", 
+      "/hannah-timeline/12-28th-birthday/img6-brad-davidians.jpg",
+      "/hannah-timeline/12-28th-birthday/img7-stamy-hospital.jpg",
     ],
     date: "2025-05-10",
   },
