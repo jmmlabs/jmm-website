@@ -6,6 +6,9 @@ import FullscreenGallery from "./FullscreenGallery";
 // Confetti animation for birthday event
 import { launchBirthdayConfetti } from "./birthdayConfetti";
 
+// Hide scrollbar utility class
+import "../styles/hideScrollbar.css";
+
 interface TimelineModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -28,13 +31,24 @@ interface TimelineModalProps {
 }
 
 const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, currentIdx: initialIdx, total, onPrev, onNext, events }) => {
-  const modalRef = useRef<HTMLDivElement>(null);
   // Central state for current event and image
   const [currentIdx, setCurrentIdx] = useState(initialIdx);
   const [selectedImgIdx, setSelectedImgIdx] = useState(0);
   const [fade, setFade] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  // Keep selected thumbnail in view
+  useEffect(() => {
+    const thumbStripRef = document.querySelector('.hide-scrollbar');
+    if (thumbStripRef) {
+      const buttons = thumbStripRef.querySelectorAll('button');
+      if (buttons[selectedImgIdx]) {
+        (buttons[selectedImgIdx] as HTMLElement).scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      }
+    }
+  }, [selectedImgIdx, currentIdx]);
 
   // Defensive: If no events or no images in current event, fallback to null
   const validEvents = events.map(ev => ({
@@ -193,8 +207,32 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
               {/* Thumbnails row (only if multiple images) */}
               {validImages.length > 1 && (
                 <div className="w-full flex justify-center">
-                  <div className="flex flex-row gap-2 mt-3 max-w-full overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent justify-center">
-                    {validImages.slice(0, 5).map((img, idx) => (
+                  {/* Arrow Button: Left */}
+                  <button
+                    type="button"
+                    aria-label="Previous thumbnail"
+                    className="mx-1 px-2 py-1 rounded-md bg-muted text-muted-foreground shadow hover:bg-border disabled:opacity-40 focus:outline-none"
+                    onClick={() => {
+                      if (selectedImgIdx > 0) {
+                        setFade(true);
+                        setTimeout(() => {
+                          setSelectedImgIdx(selectedImgIdx - 1);
+                          setFade(false);
+                        }, 160);
+                      }
+                    }}
+                    disabled={selectedImgIdx === 0}
+                    style={{ minWidth: 36, minHeight: 36, display: validImages.length > 5 ? undefined : 'none' }}
+                  >
+                    &#8592;
+                  </button>
+                  {/* Thumbnails row */}
+                  <div
+                    className="flex flex-row gap-2 mt-3 max-w-full overflow-x-auto pb-1 justify-center items-center hide-scrollbar"
+                    tabIndex={0}
+                    style={{ scrollBehavior: 'smooth' }}
+                  >
+                    {validImages.map((img, idx) => (
                       <motion.button
                         key={`thumb-${currentIdx}-${idx}`}
                         onClick={() => handleThumbnailClick(idx)}
@@ -205,7 +243,7 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
                         initial={{ opacity: 0, scale: 0.97 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 1.03 }}
-                        transition={{ duration: 0.16, ease: 'easeInOut' }} // Faster thumbnail transition
+                        transition={{ duration: 0.16, ease: 'easeInOut' }}
                       >
                         <Image
                           src={img}
@@ -219,6 +257,25 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
                       </motion.button>
                     ))}
                   </div>
+                  {/* Arrow Button: Right */}
+                  <button
+                    type="button"
+                    aria-label="Next thumbnail"
+                    className="mx-1 px-2 py-1 rounded-md bg-muted text-muted-foreground shadow hover:bg-border disabled:opacity-40 focus:outline-none"
+                    onClick={() => {
+                      if (selectedImgIdx < validImages.length - 1) {
+                        setFade(true);
+                        setTimeout(() => {
+                          setSelectedImgIdx(selectedImgIdx + 1);
+                          setFade(false);
+                        }, 160);
+                      }
+                    }}
+                    disabled={selectedImgIdx === validImages.length - 1}
+                    style={{ minWidth: 36, minHeight: 36, display: validImages.length > 5 ? undefined : 'none' }}
+                  >
+                    &#8594;
+                  </button>
                 </div>
               )}
               {/* Title & Description */}
