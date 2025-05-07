@@ -206,7 +206,7 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
               </AnimatePresence>
               {/* Thumbnails row (only if multiple images) */}
               {validImages.length > 1 && (
-                <div className="w-full flex justify-center">
+                <div className="w-full flex justify-center items-center mt-4" style={{ height: 64, padding: 0, margin: '16px 0 0 0' }}>
                   {/* Arrow Button: Left */}
                   <button
                     type="button"
@@ -222,22 +222,22 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
                       }
                     }}
                     disabled={selectedImgIdx === 0}
-                    style={{ minWidth: 36, minHeight: 36, display: validImages.length > 5 ? undefined : 'none' }}
+                    style={{ width: 36, height: 64, padding: 0, margin: 0, border: 0, boxSizing: 'border-box', display: validImages.length > 5 ? 'flex' : 'none', alignItems: 'center', justifyContent: 'center' }}
                   >
                     &#8592;
                   </button>
                   {/* Thumbnails row */}
                   <div
-                    className="flex flex-row gap-2 mt-3 max-w-full overflow-x-auto pb-1 justify-center items-center hide-scrollbar"
+                    className="flex flex-row gap-2 max-w-full overflow-x-auto justify-center items-center hide-scrollbar"
                     tabIndex={0}
-                    style={{ scrollBehavior: 'smooth' }}
+                    style={{ height: 64, scrollBehavior: 'smooth', padding: 0, margin: 0 }}
                   >
                     {validImages.map((img, idx) => (
                       <motion.button
                         key={`thumb-${currentIdx}-${idx}`}
                         onClick={() => handleThumbnailClick(idx)}
                         className={`border-2 rounded-lg focus:outline-none ${selectedImgIdx === idx ? 'border-primary shadow-md' : 'border-border opacity-80 hover:opacity-100'} flex-shrink-0 transition-all duration-400`}
-                        style={{ height: 60, width: 90, minWidth: 60, transition: 'border-color 0.16s cubic-bezier(0.4,0,0.2,1), box-shadow 0.16s cubic-bezier(0.4,0,0.2,1), opacity 0.09s' }}
+                        style={{ height: 60, width: 90, minWidth: 60, margin: 0, padding: 0, boxSizing: 'border-box', transition: 'border-color 0.16s cubic-bezier(0.4,0,0.2,1), box-shadow 0.16s cubic-bezier(0.4,0,0.2,1), opacity 0.09s' }}
                         aria-label={`Show image ${idx + 1}`}
                         tabIndex={0}
                         initial={{ opacity: 0, scale: 0.97 }}
@@ -272,7 +272,7 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
                       }
                     }}
                     disabled={selectedImgIdx === validImages.length - 1}
-                    style={{ minWidth: 36, minHeight: 36, display: validImages.length > 5 ? undefined : 'none' }}
+                    style={{ width: 36, height: 64, padding: 0, margin: 0, border: 0, boxSizing: 'border-box', display: validImages.length > 5 ? 'flex' : 'none', alignItems: 'center', justifyContent: 'center' }}
                   >
                     &#8594;
                   </button>
