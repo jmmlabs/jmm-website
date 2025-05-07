@@ -3,6 +3,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import FullscreenGallery from "./FullscreenGallery";
+// Confetti animation for birthday event
+import { launchBirthdayConfetti } from "./birthdayConfetti";
 
 interface TimelineModalProps {
   isOpen: boolean;
@@ -49,7 +51,12 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
     setCurrentIdx(initialIdx);
     setSelectedImgIdx(0);
     setFullscreen(false);
-  }, [card, initialIdx]);
+    // Birthday animation: only when opening the modal for 'First Birthday Together'
+    if (card?.title === "First Birthday Together" && isOpen) {
+      launchBirthdayConfetti();
+    }
+    // Dependency array is always [card, initialIdx, isOpen]
+  }, [card, initialIdx, isOpen]);
 
   useEffect(() => {
     setIsMobile(window.innerWidth < 768);
