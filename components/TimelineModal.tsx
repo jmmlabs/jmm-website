@@ -9,6 +9,8 @@ import { launchBirthdayConfetti } from "./birthdayConfetti";
 // Hide scrollbar utility class
 import "../styles/hideScrollbar.css";
 
+
+
 interface TimelineModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -38,6 +40,7 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
   const [fullscreen, setFullscreen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
+const descriptionRef = useRef<HTMLDivElement>(null);
 
   // Keep selected thumbnail in view
   useEffect(() => {
@@ -133,7 +136,22 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
     if (validImages[selectedImgIdx + 1]) preload(validImages[selectedImgIdx + 1]);
   }, [validImages, selectedImgIdx]);
 
-  // Fade transition when changing images
+  // Reset description scroll position when event or image changes
+useEffect(() => {
+  if (descriptionRef.current) {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (descriptionRef.current) {
+          descriptionRef.current.scrollTop = 0;
+        }
+      });
+    });
+  }
+}, [currentIdx, selectedImgIdx]);
+
+
+
+// Fade transition when changing images
   const handleThumbnailClick = (idx: number) => {
     if (idx === selectedImgIdx) return;
     setFade(true);
@@ -157,227 +175,218 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
     return date.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" });
   }
 
+  const handlePrev = () => {
+    if (isMobile) {
+      // Mobile: Scroll through images before going to previous event
+      if (selectedImgIdx > 0) {
+        setFade(true);
+        setTimeout(() => {
+          setSelectedImgIdx(selectedImgIdx - 1);
+          setFade(false);
+        }, 160);
+      } else if (currentIdx > 0) {
+        const prevEventImages = validEvents[currentIdx - 1]?.images || [];
+        setCurrentIdx(currentIdx - 1);
+        setSelectedImgIdx(prevEventImages.length - 1 || 0);
+      }
+    } else {
+      // Desktop: Go to previous event as before
+      if (currentIdx > 0) {
+        setCurrentIdx(currentIdx - 1);
+        setSelectedImgIdx(validEvents[currentIdx - 1]?.images.length - 1 || 0);
+      }
+    }
+  };
+
+  const handleNext = () => {
+    if (isMobile) {
+      // Mobile: Scroll through images before advancing event
+      if (selectedImgIdx < validImages.length - 1) {
+        setFade(true);
+        setTimeout(() => {
+          setSelectedImgIdx(selectedImgIdx + 1);
+          setFade(false);
+        }, 160);
+      } else if (currentIdx < validEvents.length - 1) {
+        setCurrentIdx(currentIdx + 1);
+        setSelectedImgIdx(0);
+      }
+    } else {
+      // Desktop: Advance event as before
+      if (currentIdx < validEvents.length - 1) {
+        setCurrentIdx(currentIdx + 1);
+        setSelectedImgIdx(0);
+      }
+    }
+  };
+
   return (
     <>
+      {/* AnimatePresence wraps only the modal, not the FullscreenGallery */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.42, ease: 'easeInOut' }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-2"
+            ref={modalRef}
+            initial={{ opacity: 0, y: 80 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 80 }}
+            transition={{ duration: 0.42, ease: 'easeInOut', type: 'spring', stiffness: 90, damping: 18 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-2 overflow-y-auto"
+            tabIndex={-1}
             onMouseDown={handleBackdropClick}
+            aria-modal="true"
+            role="dialog"
+            aria-label={currentEvent.title || 'Timeline event modal'}
           >
-            <motion.div
-              ref={modalRef}
-              initial={{ y: 80, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 80, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 90, damping: 18, duration: 0.7 }}
-              className="relative bg-card rounded-2xl shadow-xl max-w-3xl w-full p-4 md:p-8 flex flex-col items-center"
-              tabIndex={-1}
+            <div
+              className="relative bg-card rounded-2xl shadow-xl max-w-3xl w-full flex flex-col min-h-[400px] max-h-[95vh] md:min-h-[540px] md:max-h-[95vh] p-0 md:p-8"
+              style={{
+                boxSizing: 'border-box',
+                height: 'auto',
+                maxHeight: '95vh',
+                minHeight: '400px',
+                display: 'flex',
+                flexDirection: 'column',
+              }}
+              onMouseDown={e => e.stopPropagation()}
             >
-              {/* Main Image with fade transition */}
-              <AnimatePresence mode="wait">
-                {validImages[selectedImgIdx] && (
-                  <motion.div
-                    key={`main-img-${currentIdx}-${selectedImgIdx}`}
-                    initial={{ opacity: 0.8, scale: 1.01 }} // Subtle, minimal start
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0.8, scale: 0.99 }} // Minimal fade out
-                    transition={{ duration: 0.14, ease: 'easeOut' }} // Smooth, quick
-                    className={`rounded-2xl object-contain w-full max-w-2xl max-h-[60vh] border-4 border-border bg-background overflow-hidden`}
-                    style={{ aspectRatio: '16/9', minHeight: 180, willChange: 'opacity, transform', cursor: 'zoom-in' }}
-                    onClick={() => setFullscreen(true)}
-                    tabIndex={0}
-                    aria-label="Open fullscreen gallery"
-                  >
-                    <Image
-                      src={validImages[selectedImgIdx]}
-                      alt={`${currentEvent.title || 'Event'} - Image ${selectedImgIdx + 1}`}
-                      width={960}
-                      height={600}
-                      className="rounded-2xl object-contain w-full h-full bg-background"
-                      priority
-                    />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-              {/* Thumbnails row (only if multiple images) */}
-              {validImages.length > 1 && (
-                <div className="flex justify-center items-center mt-4 max-w-2xl w-full" style={{ height: 64, padding: 0, margin: '16px 0 0 0' }}>
-                  {/* Arrow Button: Left */}
-                  <button
-                    type="button"
-                    aria-label="Previous thumbnail"
-                    className="mx-1 px-2 py-1 rounded-md bg-muted text-muted-foreground shadow hover:bg-border disabled:opacity-40 focus:outline-none thumbnail-nav-arrow-left"
-                    onClick={() => {
-                      if (selectedImgIdx > 0) {
-                        setFade(true);
-                        setTimeout(() => {
-                          setSelectedImgIdx(selectedImgIdx - 1);
-                          setFade(false);
-                        }, 160);
-                      }
-                    }}
-                    disabled={selectedImgIdx === 0}
-                    style={{ width: 36, height: 64, padding: 0, margin: 0, border: 0, boxSizing: 'border-box', display: validImages.length > 5 ? 'flex' : 'none', alignItems: 'center', justifyContent: 'center' }}
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
-                      <polyline points="15 6 9 12 15 18" />
-                    </svg>
-                  </button>
-                  {/* Thumbnails row */}
-                  <div
-                    className="flex flex-row gap-2 overflow-x-auto justify-center items-center hide-scrollbar thumbnail-container"
-                    tabIndex={0}
-                    style={{ height: 64, scrollBehavior: 'smooth', padding: 0, margin: 0 }}
-                  >
-                    {validImages.map((img, idx) => (
-                      <motion.button
-                        key={`thumb-${currentIdx}-${idx}`}
-                        onClick={() => handleThumbnailClick(idx)}
-                        className={`border-2 rounded-lg focus:outline-none ${selectedImgIdx === idx ? 'border-primary shadow-md' : 'border-border opacity-80 hover:opacity-100'} flex-shrink-0 transition-all duration-400`}
-                        style={{ height: 60, width: 90, minWidth: 60, margin: 0, padding: 0, boxSizing: 'border-box', transition: 'border-color 0.16s cubic-bezier(0.4,0,0.2,1), box-shadow 0.16s cubic-bezier(0.4,0,0.2,1), opacity 0.09s' }}
-                        aria-label={`Show image ${idx + 1}`}
-                        tabIndex={0}
-                        initial={{ opacity: 0, scale: 0.97 }}
+              {/* Sticky Header with Close Button (OUTSIDE scrollable area) */}
+              <div className="sticky top-0 z-20 bg-card/95 pt-[env(safe-area-inset-top)] px-4 py-2 flex justify-end rounded-t-2xl h-14 min-h-[3.5rem]" style={{backdropFilter: 'blur(2px)'}}>
+                <button
+                  onClick={onClose}
+                  className="w-10 h-10 flex items-center justify-center text-2xl text-muted-foreground hover:text-foreground focus:outline-none"
+                  aria-label="Close modal"
+                  style={{ fontSize: 28 }}
+                >
+                  ×
+                </button>
+              </div>
+              {/* Main Content (fixed layout, only desc scrolls) */}
+              <div className="flex flex-col items-center w-full gap-4 flex-shrink-0">
+                {/* Main Image */}
+                <div className="flex items-center justify-center w-full max-w-2xl h-[180px] md:h-[240px]">
+                  <AnimatePresence mode="wait">
+                    {validImages[selectedImgIdx] && (
+                      <motion.div
+                        key={`main-img-${currentIdx}-${selectedImgIdx}`}
+                        initial={{ opacity: 0.8, scale: 1.01 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 1.03 }}
-                        transition={{ duration: 0.16, ease: 'easeInOut' }}
+                        exit={{ opacity: 0.8, scale: 0.99 }}
+                        transition={{ duration: 0.14, ease: 'easeOut' }}
+                        className="rounded-2xl border-4 border-border bg-background shadow-lg w-full h-full flex items-center justify-center"
+                        style={{ aspectRatio: '16/9', cursor: 'zoom-in' }}
+                        onClick={() => setFullscreen(true)}
+                        tabIndex={0}
+                        aria-label="Open fullscreen gallery"
                       >
                         <Image
-                          src={img}
-                          alt={`${currentEvent.title || 'Event'} - Thumbnail ${idx + 1}`}
-                          width={90}
-                          height={60}
-                          className="object-contain w-full h-full rounded-lg"
-                          loading={Math.abs(selectedImgIdx - idx) <= 1 ? 'eager' : 'lazy'}
-                          draggable={false}
+                          src={validImages[selectedImgIdx]}
+                          alt={`${currentEvent.title || 'Event'} - Image ${selectedImgIdx + 1}`}
+                          width={960}
+                          height={600}
+                          className="rounded-2xl object-contain w-full h-full bg-background"
+                          priority
                         />
-                      </motion.button>
-                    ))}
-                  </div>
-                  {/* Arrow Button: Right */}
-                  <button
-                    type="button"
-                    aria-label="Next thumbnail"
-                    className="mx-1 px-2 py-1 rounded-md bg-muted text-muted-foreground shadow hover:bg-border disabled:opacity-40 focus:outline-none thumbnail-nav-arrow-right"
-                    onClick={() => {
-                      if (selectedImgIdx < validImages.length - 1) {
-                        setFade(true);
-                        setTimeout(() => {
-                          setSelectedImgIdx(selectedImgIdx + 1);
-                          setFade(false);
-                        }, 160);
-                      }
-                    }}
-                    disabled={selectedImgIdx === validImages.length - 1}
-                    style={{ width: 36, height: 64, padding: 0, margin: 0, border: 0, boxSizing: 'border-box', display: validImages.length > 5 ? 'flex' : 'none', alignItems: 'center', justifyContent: 'center' }}
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
-                      <polyline points="9 6 15 12 9 18" />
-                    </svg>
-                  </button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
-              )}
-              {/* Title & Description */}
-              <h2 className="text-2xl font-bold text-center mt-4 mb-2 text-foreground w-full break-words">
-                {currentEvent.title}
-              </h2>
-              <div className="text-base md:text-lg text-muted-foreground mb-2 text-center w-full max-w-2xl break-words">
+                {/* Thumbnails */}
+                <div className="flex justify-center items-center max-w-2xl w-full mt-2 mb-2 gap-2 h-[56px] overflow-x-auto hide-scrollbar">
+  {/* Arrow Button: Left */}
+  <button
+    type="button"
+    onClick={() => setSelectedImgIdx(Math.max(selectedImgIdx - 1, 0))}
+    disabled={selectedImgIdx === 0 || validImages.length === 1}
+    className="w-8 h-8 rounded-full bg-muted text-muted-foreground flex items-center justify-center disabled:opacity-40"
+    aria-label="Previous image"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+      <polyline points="15 6 9 12 15 18" />
+    </svg>
+  </button>
+  {/* Thumbnails */}
+  {validImages.map((img, idx) => (
+    <button
+      key={img + idx}
+      className={`mx-1 rounded-lg border-2 ${idx === selectedImgIdx ? 'border-primary' : 'border-transparent'} focus:outline-none`}
+      style={{ width: 48, height: 48, overflow: 'hidden', flex: '0 0 auto' }}
+      onClick={() => setSelectedImgIdx(idx)}
+      aria-label={`Thumbnail ${idx + 1}`}
+    >
+      <Image
+        src={img}
+        alt={`Thumbnail ${idx + 1}`}
+        width={48}
+        height={48}
+        className="object-cover w-full h-full rounded"
+      />
+    </button>
+  ))}
+  {/* Arrow Button: Right */}
+  <button
+    type="button"
+    onClick={() => setSelectedImgIdx(Math.min(selectedImgIdx + 1, validImages.length - 1))}
+    disabled={selectedImgIdx === validImages.length - 1 || validImages.length === 1}
+    className="w-8 h-8 rounded-full bg-muted text-muted-foreground flex items-center justify-center disabled:opacity-40"
+    aria-label="Next image"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+      <polyline points="9 6 15 12 9 18" />
+    </svg>
+  </button>
+</div>
+                {/* Title */}
+                <h2 className="text-2xl md:text-3xl font-bold text-center mt-2 mb-1 leading-tight w-full break-words">
+                  {currentEvent.title}
+                </h2>
+                {/* Date Badge */}
+                <div className="inline-block text-base md:text-lg font-semibold text-primary bg-primary/10 px-4 py-1 mb-2 text-center w-auto rounded-full tracking-wide shadow-sm">
+                  {formatDate(currentEvent.date)}
+                </div>
+              </div>
+              {/* Description (scrollable, grows/shrinks as needed) */}
+              <div
+                ref={descriptionRef}
+                className="overflow-y-auto text-base md:text-lg text-muted-foreground mb-2 text-center w-full max-w-2xl break-words rounded bg-muted/70 px-3 py-2" style={{ height: '220px' }} tabIndex={0}>
                 {currentEvent.description}
               </div>
-              {/* Date */}
-              <div
-                className="inline-block text-base md:text-lg font-semibold text-primary bg-primary/10 px-3 py-1 mt-2 mb-1 text-center w-auto rounded-full tracking-wide shadow-sm"
-                style={{ letterSpacing: '0.02em' }}
-              >
-                {formatDate(currentEvent.date)}
-              </div>
-              {/* Navigation Arrows */}
-              <div className="flex flex-row items-center justify-between w-full mt-4">
+              {/* Navigation Buttons (always visible, fixed height) */}
+              <div className="flex flex-row items-center justify-between gap-8 mt-4 w-full max-w-2xl">
+                {/* Previous Button */}
                 <button
-                  onClick={() => {
-                    if (isMobile) {
-                      // Mobile: Scroll through images before going to previous event
-                      if (selectedImgIdx > 0) {
-                        setFade(true);
-                        setTimeout(() => {
-                          setSelectedImgIdx(selectedImgIdx - 1);
-                          setFade(false);
-                        }, 160);
-                      } else if (currentIdx > 0) {
-                        const prevEventImages = validEvents[currentIdx - 1]?.images || [];
-                        setCurrentIdx(currentIdx - 1);
-                        setSelectedImgIdx(prevEventImages.length - 1 || 0);
-                      }
-                    } else {
-                      // Desktop: Go to previous event as before
-                      if (currentIdx > 0) {
-                        setCurrentIdx(currentIdx - 1);
-                        setSelectedImgIdx(validEvents[currentIdx - 1]?.images.length - 1 || 0);
-                      }
-                    }
-                  }}
+                  onClick={handlePrev}
                   disabled={isMobile ? (currentIdx === 0 && selectedImgIdx === 0) : (currentIdx === 0)}
-                  className="px-4 py-2 rounded-lg bg-muted text-muted-foreground hover:bg-border disabled:opacity-40"
+                  className="px-6 py-3 rounded-xl bg-muted text-muted-foreground hover:bg-border disabled:opacity-40 min-w-[64px] min-h-[54px] text-lg font-semibold shadow-md transition-all"
                   aria-label="Previous"
                 >
                   <span className="flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 mr-1">
-                      <path d="M12 19l-7-7 7-7"/>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 mr-2">
+                      <polyline points="15 6 9 12 15 18" />
                     </svg>
                     Prev
                   </span>
                 </button>
+                {/* Next Button */}
                 <button
-                  onClick={() => {
-                    if (isMobile) {
-                      // Mobile: Scroll through images before advancing event
-                      if (selectedImgIdx < validImages.length - 1) {
-                        setFade(true);
-                        setTimeout(() => {
-                          setSelectedImgIdx(selectedImgIdx + 1);
-                          setFade(false);
-                        }, 160);
-                      } else if (currentIdx < validEvents.length - 1) {
-                        setCurrentIdx(currentIdx + 1);
-                        setSelectedImgIdx(0);
-                      }
-                    } else {
-                      // Desktop: Advance event as before
-                      if (currentIdx < validEvents.length - 1) {
-                        setCurrentIdx(currentIdx + 1);
-                        setSelectedImgIdx(0);
-                      }
-                    }
-                  }}
+                  onClick={handleNext}
                   disabled={isMobile ? (currentIdx === validEvents.length - 1 && selectedImgIdx === validImages.length - 1) : (currentIdx === validEvents.length - 1)}
-                  className="px-4 py-2 rounded-lg bg-muted text-muted-foreground hover:bg-border disabled:opacity-40"
+                  className="px-6 py-3 rounded-xl bg-muted text-muted-foreground hover:bg-border disabled:opacity-40 min-w-[64px] min-h-[54px] text-lg font-semibold shadow-md transition-all"
                   aria-label="Next"
                 >
                   <span className="flex items-center">
                     Next
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 ml-1">
-                      <path d="M12 5l7 7-7 7"/>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 ml-2">
+                      <polyline points="9 6 15 12 9 18" />
                     </svg>
                   </span>
                 </button>
               </div>
-              {/* Close */}
-              <button
-                onClick={onClose}
-                className="absolute top-4 right-4 text-2xl text-muted-foreground hover:text-foreground focus:outline-none"
-                aria-label="Close modal"
-              >
-                ×
-              </button>
-            </motion.div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
+      {/* FullscreenGallery is outside AnimatePresence for best animation/SSR practices */}
       <FullscreenGallery
         isOpen={fullscreen}
         onClose={() => setFullscreen(false)}
@@ -391,6 +400,6 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
       />
     </>
   );
-};
+}
 
 export default TimelineModal;
