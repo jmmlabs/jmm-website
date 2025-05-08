@@ -33,55 +33,30 @@ interface TimelineModalProps {
 }
 
 const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, currentIdx: initialIdx, total, onPrev, onNext, events }) => {
-  // Central state for current event and image
+  // All hooks at the top, always called
   const [currentIdx, setCurrentIdx] = useState(initialIdx);
   const [selectedImgIdx, setSelectedImgIdx] = useState(0);
   const [fade, setFade] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [ready, setReady] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
-const descriptionRef = useRef<HTMLDivElement>(null);
-
-  // Keep selected thumbnail in view
-  useEffect(() => {
-    const thumbStripRef = document.querySelector('.hide-scrollbar');
-    if (thumbStripRef) {
-      const buttons = thumbStripRef.querySelectorAll('button');
-      if (buttons[selectedImgIdx]) {
-        (buttons[selectedImgIdx] as HTMLElement).scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-      }
-    }
-  }, [selectedImgIdx, currentIdx]);
-
-  // Defensive: If no events or no images in current event, fallback to null
-  const validEvents = events.map(ev => ({
-    ...ev,
-    images: Array.isArray(ev.images) ? ev.images.filter(img => typeof img === "string" && img.trim() !== "") : []
-  }));
-  const currentEvent = validEvents[currentIdx] || { images: [] };
-  const validImages = currentEvent.images;
-  if (!validImages || validImages.length === 0) {
-    return null;
-  }
-
-  useEffect(() => {
-    setCurrentIdx(initialIdx);
-    setSelectedImgIdx(0);
-    setFullscreen(false);
-  }, [card, initialIdx]);
-
-  // Confetti animation: trigger when modal is open and current event changes to 'First Birthday Together'
+  const descriptionRef = useRef<HTMLDivElement>(null);
+  const thumbnailRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const lastConfettiEventTitle = useRef<string | null>(null);
+
+  // Effects that do NOT depend on currentEvent/validImages
   useEffect(() => {
-    if (isOpen && currentEvent.title === "First Birthday Together" && lastConfettiEventTitle.current !== currentEvent.title) {
-      launchBirthdayConfetti();
-      lastConfettiEventTitle.current = currentEvent.title;
-    } else if (!isOpen) {
-      lastConfettiEventTitle.current = null; // Reset when modal closes
-    } else if (currentEvent.title !== "First Birthday Together") {
-      lastConfettiEventTitle.current = currentEvent.title;
+    if (isOpen) {
+      setCurrentIdx(initialIdx);
+      setSelectedImgIdx(0);
+      setFullscreen(false);
+      setReady(false);
+      setTimeout(() => setReady(true), 0);
+    } else {
+      setReady(false);
     }
-  }, [isOpen, currentEvent.title]);
+  }, [isOpen, card, initialIdx]);
 
   useEffect(() => {
     setIsMobile(window.innerWidth < 768);
@@ -100,7 +75,6 @@ const descriptionRef = useRef<HTMLDivElement>(null);
           }, 160);
         } else if (currentIdx > 0) {
           setCurrentIdx(currentIdx - 1);
-          // Set to last image of previous event
           setSelectedImgIdx(validEvents[currentIdx - 1]?.images.length - 1 || 0);
         }
       }
@@ -123,9 +97,24 @@ const descriptionRef = useRef<HTMLDivElement>(null);
       document.body.style.overflow = "";
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isOpen, fullscreen, onClose, currentIdx, validEvents, validImages, selectedImgIdx]);
+  }, [isOpen, onClose, currentIdx, selectedImgIdx, fullscreen]);
 
-  // Preload adjacent images
+  // Derived values after all hooks
+  const validEvents = events.map(ev => ({
+    ...ev,
+    images: Array.isArray(ev.images) ? ev.images.filter(img => typeof img === "string" && img.trim() !== "") : []
+  }));
+  const currentEvent = validEvents[currentIdx] || { images: [] };
+  const validImages = currentEvent.images;
+
+  // Effects that depend on derived values
+  useEffect(() => {
+    const ref = thumbnailRefs.current[selectedImgIdx];
+    if (ref) {
+      ref.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    }
+  }, [selectedImgIdx, currentIdx]);
+
   useEffect(() => {
     if (validImages.length <= 1) return;
     const preload = (src: string) => {
@@ -136,22 +125,33 @@ const descriptionRef = useRef<HTMLDivElement>(null);
     if (validImages[selectedImgIdx + 1]) preload(validImages[selectedImgIdx + 1]);
   }, [validImages, selectedImgIdx]);
 
-  // Reset description scroll position when event or image changes
-useEffect(() => {
-  if (descriptionRef.current) {
-    requestAnimationFrame(() => {
+  useEffect(() => {
+    if (descriptionRef.current) {
       requestAnimationFrame(() => {
         if (descriptionRef.current) {
           descriptionRef.current.scrollTop = 0;
         }
       });
-    });
+    };
+  }, [currentIdx, selectedImgIdx]);
+
+  useEffect(() => {
+    if (isOpen && currentEvent.title === "First Birthday Together" && lastConfettiEventTitle.current !== currentEvent.title) {
+      launchBirthdayConfetti();
+      lastConfettiEventTitle.current = currentEvent.title;
+    } else if (!isOpen) {
+      lastConfettiEventTitle.current = null;
+    } else if (currentEvent.title !== "First Birthday Together") {
+      lastConfettiEventTitle.current = currentEvent.title;
+    }
+  }, [isOpen, currentEvent?.title]);
+
+  // All early returns after hooks/effects and derived values
+  if (!validImages || validImages.length === 0 || (isOpen && !ready)) {
+    return null;
   }
-}, [currentIdx, selectedImgIdx]);
 
-
-
-// Fade transition when changing images
+  // Fade transition when changing images
   const handleThumbnailClick = (idx: number) => {
     if (idx === selectedImgIdx) return;
     setFade(true);
@@ -309,6 +309,7 @@ useEffect(() => {
   {validImages.map((img, idx) => (
     <button
       key={img + idx}
+      ref={el => { thumbnailRefs.current[idx] = el; }}
       className={`mx-1 rounded-lg border-2 ${idx === selectedImgIdx ? 'border-primary' : 'border-transparent'} focus:outline-none`}
       style={{ width: 48, height: 48, overflow: 'hidden', flex: '0 0 auto' }}
       onClick={() => setSelectedImgIdx(idx)}
