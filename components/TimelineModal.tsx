@@ -366,10 +366,10 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
                 {/* Navigation Buttons (bottom, separated) */}
                 <div className="mt-4 w-full">
                   <TimelineModalNavigation
-                    onPrev={handlePrev}
-                    onNext={handleNext}
-                    disablePrev={isMobile ? (currentIdx === 0 && selectedImgIdx === 0) : (currentIdx === 0)}
-                    disableNext={isMobile ? (currentIdx === validEvents.length - 1 && selectedImgIdx === validImages.length - 1) : (currentIdx === validEvents.length - 1)}
+                    onPrev={handleCardPrev}
+                    onNext={handleCardNext}
+                    disablePrev={currentIdx === 0}
+                    disableNext={currentIdx === validEvents.length - 1}
                   />
                 </div>
               </div>
