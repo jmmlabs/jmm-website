@@ -115,6 +115,7 @@ export const timelineData: TimelineEvent[] = [
       "/hannah-timeline/11-first-film-together/img2-hannah-light2.jpg",
       "/hannah-timeline/11-first-film-together/img3-hannah-under.jpg",
       "/hannah-timeline/11-first-film-together/img4-hannah-under2.jpg",
+      "/hannah-timeline/11-first-film-together/img4-sequoia-poster.jpg",
       "/hannah-timeline/11-first-film-together/img5-hannah-scared.jpg"
     ],
     date: "2025-05-03",
