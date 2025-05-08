@@ -22,6 +22,12 @@ export interface TimelineModalThumbnailsProps {
   readonly selectedIdx: number;
   readonly onSelect: (idx: number) => void;
   readonly thumbnailRefs: React.MutableRefObject<(HTMLButtonElement | null)[]>;
+  // New unified navigation and loading props
+  readonly canImagePrev: boolean;
+  readonly canImageNext: boolean;
+  readonly handleImagePrev: () => void;
+  readonly handleImageNext: () => void;
+  readonly loading: boolean;
 }
 
 export interface TimelineModalDescriptionProps {

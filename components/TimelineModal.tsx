@@ -47,33 +47,109 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
     setIsMobile(window.innerWidth < 768);
   }, []);
 
+  // Unified keyboard navigation: left/right for images, up/down for cards
   useEffect(() => {
     if (!isOpen || fullscreen) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
       if (e.key === "ArrowLeft") {
-        if (selectedImgIdx > 0) {
-          setFade(true);
-          setTimeout(() => {
-            setSelectedImgIdx(selectedImgIdx - 1);
-            setFade(false);
-          }, 160);
-        } else if (currentIdx > 0) {
-          setCurrentIdx(currentIdx - 1);
-          setSelectedImgIdx(validEvents[currentIdx - 1]?.images.length - 1 || 0);
-        }
+        if (canImagePrev()) handleImagePrev();
       }
       if (e.key === "ArrowRight") {
-        if (selectedImgIdx < validImages.length - 1) {
-          setFade(true);
-          setTimeout(() => {
-            setSelectedImgIdx(selectedImgIdx + 1);
-            setFade(false);
-          }, 160);
-        } else if (currentIdx < validEvents.length - 1) {
-          setCurrentIdx(currentIdx + 1);
-          setSelectedImgIdx(0);
-        }
+        if (canImageNext()) handleImageNext();
+      }
+      if (e.key === "ArrowUp") {
+        if (canCardPrev()) handleCardPrev();
+      }
+      if (e.key === "ArrowDown") {
+        if (canCardNext()) handleCardNext();
+      }
+    };
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen, onClose, currentIdx, selectedImgIdx, fullscreen]);
+
+  // --- Navigation logic helpers ---
+  const canCardPrev = () => currentIdx > 0;
+  const canCardNext = () => currentIdx < validEvents.length - 1;
+  const canImagePrev = () => !(currentIdx === 0 && selectedImgIdx === 0);
+  const canImageNext = () => !(currentIdx === validEvents.length - 1 && selectedImgIdx === validImages.length - 1);
+
+  // --- Navigation handlers ---
+  // Card navigation (bottom Prev/Next)
+  const handleCardPrev = () => {
+    if (canCardPrev()) {
+      setCurrentIdx(idx => {
+        setSelectedImgIdx(0);
+        return idx - 1;
+      });
+    }
+  };
+  const handleCardNext = () => {
+    if (canCardNext()) {
+      setCurrentIdx(idx => {
+        setSelectedImgIdx(0);
+        return idx + 1;
+      });
+    }
+  };
+  // Image loading state for spinner
+  const [loading, setLoading] = React.useState(true);
+
+  // Image navigation (thumbnail arrows)
+  const handleImagePrev = () => {
+    if (selectedImgIdx > 0) {
+      setFade(true);
+      setTimeout(() => {
+        setSelectedImgIdx(selectedImgIdx - 1);
+        setFade(false);
+      }, 160);
+    } else if (canCardPrev()) {
+      setCurrentIdx(idx => {
+        const prevImages = validEvents[idx - 1]?.images || [];
+        setSelectedImgIdx(prevImages.length - 1);
+        return idx - 1;
+      });
+    }
+  };
+  const handleImageNext = () => {
+    if (selectedImgIdx < validImages.length - 1) {
+      setFade(true);
+      setTimeout(() => {
+        setSelectedImgIdx(selectedImgIdx + 1);
+        setFade(false);
+      }, 160);
+    } else if (canCardNext()) {
+      setCurrentIdx(idx => {
+        setSelectedImgIdx(0);
+        return idx + 1;
+      });
+    }
+  };
+
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 768);
+  }, []);
+
+  useEffect(() => {
+    if (!isOpen || fullscreen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowLeft") {
+        if (canImagePrev()) handleImagePrev();
+      }
+      if (e.key === "ArrowRight") {
+        if (canImageNext()) handleImageNext();
+      }
+      if (e.key === "ArrowUp") {
+        if (canCardPrev()) handleCardPrev();
+      }
+      if (e.key === "ArrowDown") {
+        if (canCardNext()) handleCardNext();
       }
     };
     document.body.style.overflow = "hidden";
@@ -94,11 +170,15 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
 
   // Effects that depend on derived values
   useEffect(() => {
+    // Ensure selectedImgIdx is always valid for the current event
+    if (selectedImgIdx >= validImages.length) {
+      setSelectedImgIdx(0);
+    }
     const ref = thumbnailRefs.current[selectedImgIdx];
     if (ref) {
       ref.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
     }
-  }, [selectedImgIdx, currentIdx]);
+  }, [selectedImgIdx, currentIdx, validImages.length]);
 
   useEffect(() => {
     if (validImages.length <= 1) return;
@@ -170,15 +250,18 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
           setFade(false);
         }, 160);
       } else if (currentIdx > 0) {
-        const prevEventImages = validEvents[currentIdx - 1]?.images || [];
-        setCurrentIdx(currentIdx - 1);
-        setSelectedImgIdx(prevEventImages.length - 1 || 0);
+        setCurrentIdx(idx => {
+          setSelectedImgIdx(0);
+          return idx - 1;
+        });
       }
     } else {
       // Desktop: Go to previous event as before
       if (currentIdx > 0) {
-        setCurrentIdx(currentIdx - 1);
-        setSelectedImgIdx(validEvents[currentIdx - 1]?.images.length - 1 || 0);
+        setCurrentIdx(idx => {
+          setSelectedImgIdx(0);
+          return idx - 1;
+        });
       }
     }
   };
@@ -193,14 +276,18 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
           setFade(false);
         }, 160);
       } else if (currentIdx < validEvents.length - 1) {
-        setCurrentIdx(currentIdx + 1);
-        setSelectedImgIdx(0);
+        setCurrentIdx(idx => {
+          setSelectedImgIdx(0);
+          return idx + 1;
+        });
       }
     } else {
       // Desktop: Advance event as before
       if (currentIdx < validEvents.length - 1) {
-        setCurrentIdx(currentIdx + 1);
-        setSelectedImgIdx(0);
+        setCurrentIdx(idx => {
+          setSelectedImgIdx(0);
+          return idx + 1;
+        });
       }
     }
   };
@@ -248,8 +335,10 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
                   <div className="mb-3 w-full">
                     <TimelineModalMainImage
                       image={validImages[selectedImgIdx]}
-                      title={`${currentEvent.title || 'Event'} - Image ${selectedImgIdx + 1}`}
+                      title={currentEvent.title}
                       onZoom={() => setFullscreen(true)}
+                      loading={loading}
+                      setLoading={setLoading}
                     />
                   </div>
                 )}
@@ -260,6 +349,11 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
                     selectedIdx={selectedImgIdx}
                     onSelect={setSelectedImgIdx}
                     thumbnailRefs={thumbnailRefs}
+                    canImagePrev={canImagePrev()}
+                    canImageNext={canImageNext()}
+                    handleImagePrev={handleImagePrev}
+                    handleImageNext={handleImageNext}
+                    loading={loading}
                   />
                 </div>
                 {/* Description (visually distinct, scrollable) */}
