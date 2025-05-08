@@ -12,6 +12,7 @@ export const timelineData: TimelineEvent[] = [
     title: "Meet Cute",
     description: "Jacob spots Hannah from across the bar, and a golden ray of light shines down on her beautiful smile and stylish gray outfit. He approaches her and learns about her love for swamp water martinis, her handsome cat, Monkey Boy, and that she is unfortunately seeing someone at the time. Jacob knows he can't miss this once-in-a-lifetime opportunity and somehow persists to get her number. Once this tremendous feat has been accomplished, he knows his work is done, and he promptly leaves, smiling all the way home, hoping they will meet again one day.",
     images: [
+      "/hannah-timeline/01-meet-cute/img1-hannah-first-look.jpg",
       "/hannah-timeline/01-meet-cute/img1-speed-dating.jpg",
       "/hannah-timeline/01-meet-cute/img2-first-text.jpg",
       "/hannah-timeline/01-meet-cute/img3-julia-eric-text.jpg"

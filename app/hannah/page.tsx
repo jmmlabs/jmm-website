@@ -2,29 +2,29 @@ import HannahPageClient from "./HannahPageClient";
 
 export const metadata = {
   title: "HLT Surprise",
-  description: "A timeline of Hannah & Jacob's story. ",
+  description: "A suprise for Hannah :)",
   openGraph: {
     title: "HLT Surprise",
-    description: "A timeline of Hannah & Jacob's story.",
+    description: "A suprise for Hannah :)",
     images: [
       {
-        url: "/frisc-secret-keeper.png",
+        url: "/hannah-timeline/01-meet-cute/img1-hannah-first-look.jpg",
         width: 1200,
         height: 630,
-        alt: "HLT Surprise OG Image"
+        alt: "A suprise for Hannah :)"
       }
     ]
   },
   twitter: {
     card: "summary_large_image",
     title: "HLT Surprise",
-    description: "A timeline of Hannah & Jacob's story.",
+    description: "A suprise for Hannah :)",
     images: [
       {
-        url: "/frisc-secret-keeper.png",
+        url: "/hannah-timeline/01-meet-cute/img1-hannah-first-look.jpg",
         width: 1200,
         height: 630,
-        alt: "HLT Surprise OG Image"
+        alt: "A suprise for Hannah :)"
       }
     ]
   }
