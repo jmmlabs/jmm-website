@@ -18,7 +18,7 @@ const TimelineModalThumbnails: React.FC<Readonly<TimelineModalThumbnailsProps>> 
     <div className="w-full flex items-center justify-center relative" style={{ maxWidth: '100%' }}>
       {/* Left black edge mask & arrow */}
       <div className="relative flex-shrink-0 w-9 h-[56px] flex items-center justify-center z-30">
-        <div className="absolute left-0 top-0 h-full w-9 bg-black z-20 pointer-events-none" aria-hidden="true" />
+        <div className="absolute left-0 top-0 h-full w-9 bg-background z-20 pointer-events-none" aria-hidden="true" />
         <button
           type="button"
           onClick={handleImagePrev}
@@ -61,13 +61,13 @@ const TimelineModalThumbnails: React.FC<Readonly<TimelineModalThumbnailsProps>> 
           </div>
         </div>
         {/* Left black edge mask for overflow clipping */}
-        <div className="absolute left-0 top-0 h-full w-9 bg-black z-20 pointer-events-none" aria-hidden="true" />
+        <div className="absolute left-0 top-0 h-full w-9 bg-background z-20 pointer-events-none" aria-hidden="true" />
         {/* Right black edge mask for overflow clipping */}
-        <div className="absolute right-0 top-0 h-full w-9 bg-black z-20 pointer-events-none" aria-hidden="true" />
+        <div className="absolute right-0 top-0 h-full w-9 bg-background z-20 pointer-events-none" aria-hidden="true" />
       </div>
       {/* Right black edge mask & arrow */}
       <div className="relative flex-shrink-0 w-9 h-[56px] flex items-center justify-center z-30">
-        <div className="absolute right-0 top-0 h-full w-9 bg-black z-20 pointer-events-none" aria-hidden="true" />
+        <div className="absolute right-0 top-0 h-full w-9 bg-background z-20 pointer-events-none" aria-hidden="true" />
         <button
           type="button"
           onClick={handleImageNext}
