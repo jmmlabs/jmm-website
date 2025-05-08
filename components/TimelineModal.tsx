@@ -206,7 +206,7 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
               </AnimatePresence>
               {/* Thumbnails row (only if multiple images) */}
               {validImages.length > 1 && (
-                <div className="w-full flex justify-center items-center mt-4" style={{ height: 64, padding: 0, margin: '16px 0 0 0' }}>
+                <div className="flex justify-center items-center mt-4 max-w-2xl w-full" style={{ height: 64, padding: 0, margin: '16px 0 0 0' }}>
                   {/* Arrow Button: Left */}
                   <button
                     type="button"
@@ -228,7 +228,7 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
                   </button>
                   {/* Thumbnails row */}
                   <div
-                    className="flex flex-row gap-2 max-w-full overflow-x-auto justify-center items-center hide-scrollbar thumbnail-container"
+                    className="flex flex-row gap-2 overflow-x-auto justify-center items-center hide-scrollbar thumbnail-container"
                     tabIndex={0}
                     style={{ height: 64, scrollBehavior: 'smooth', padding: 0, margin: 0 }}
                   >
