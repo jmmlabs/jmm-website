@@ -23,6 +23,8 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
   const [selectedImgIdx, setSelectedImgIdx] = useState(0);
   const [fade, setFade] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
+  // Prevent accidental fullscreen after modal close
+  const justClosedRef = useRef(false);
   const [isMobile, setIsMobile] = useState(false);
   const [ready, setReady] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
@@ -40,6 +42,7 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
       setTimeout(() => setReady(true), 0);
     } else {
       setReady(false);
+      justClosedRef.current = true; // Set flag on modal close
     }
   }, [isOpen, card, initialIdx]);
 
@@ -336,7 +339,13 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
                     <TimelineModalMainImage
                       image={validImages[selectedImgIdx]}
                       title={currentEvent.title}
-                      onZoom={() => setFullscreen(true)}
+                      onZoom={() => {
+                        if (justClosedRef.current) {
+                          justClosedRef.current = false; // Block accidental fullscreen
+                          return;
+                        }
+                        setFullscreen(true);
+                      }}
                       loading={loading}
                       setLoading={setLoading}
                     />
