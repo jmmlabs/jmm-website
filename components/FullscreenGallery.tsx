@@ -3,10 +3,12 @@ import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 
+import type { TimelineEvent } from "./TimelineModal.types";
+
 interface FullscreenGalleryProps {
   isOpen: boolean;
   onClose: () => void;
-  events: { images: string[]; title: string }[];
+  events: Readonly<TimelineEvent[]>;
   eventIdx: number;
   imageIdx: number;
   onNavigate: (eventIdx: number, imageIdx: number) => void;
