@@ -61,6 +61,8 @@ export default function Timeline() {
               </div>
               {/* Center column: timeline dot and vertical line */}
               <div className="flex flex-col items-center h-full min-h-[80px] md:min-h-[140px] z-10">
+                {/* Spacer for first dot to center it */}
+                {idx === 0 && <div className="flex-grow" />}
                 {/* Vertical line segment for all but first dot */}
                 {idx !== 0 && (
                   <div className="w-2 flex-grow bg-border" />
@@ -71,6 +73,8 @@ export default function Timeline() {
                 {idx !== sorted.length - 1 && (
                   <div className="w-2 flex-grow bg-border" />
                 )}
+                {/* Spacer for last dot to center it */}
+                {idx === sorted.length - 1 && <div className="flex-grow" />}
               </div>
               {/* Right column (odd idx) */}
               <div className={`flex justify-start items-center min-h-[140px] snap-start ${idx % 2 === 1 ? '' : 'invisible'}`}
