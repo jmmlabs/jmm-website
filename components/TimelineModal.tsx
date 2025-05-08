@@ -314,7 +314,7 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
             aria-label={currentEvent.title || 'Timeline event modal'}
           >
             <div
-              className="relative bg-card rounded-2xl shadow-xl max-w-3xl w-full flex flex-col min-h-[400px] max-h-[95vh] md:min-h-[540px] md:max-h-[95vh] p-0 md:p-8"
+              className="relative bg-card/95 border border-border rounded-2xl shadow-2xl max-w-3xl w-full flex flex-col min-h-[400px] max-h-[95vh] md:min-h-[540px] md:max-h-[95vh] p-0 md:p-8"
               style={{
                 boxSizing: 'border-box',
                 height: 'auto',
@@ -325,11 +325,23 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
               }}
               onMouseDown={e => e.stopPropagation()}
             >
+              {/* Close Button (absolute, top-right) */}
+              <button
+                onClick={onClose}
+                className="absolute right-0 top-0 w-10 h-10 md:w-12 md:h-12 m-2 md:m-4 rounded-full bg-muted text-muted-foreground flex items-center justify-center shadow hover:bg-border hover:text-foreground focus:outline-none transition-all text-lg md:text-xl z-50"
+                aria-label="Close modal"
+                style={{ fontSize: 28 }}
+                tabIndex={0}
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6" aria-hidden="true">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
               {/* Header */}
               <TimelineModalHeader
                 title={currentEvent.title}
                 date={formatDate(currentEvent.date)}
-                onClose={onClose}
               />
               {/* Main Content - optimal stacking and separation */}
               <div className="flex flex-col items-center w-full gap-y-4 px-4">
