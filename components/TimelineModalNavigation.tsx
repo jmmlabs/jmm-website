@@ -2,7 +2,7 @@ import React from "react";
 import type { TimelineModalNavigationProps } from "./TimelineModal.types";
 
 const TimelineModalNavigation: React.FC<Readonly<TimelineModalNavigationProps>> = ({ onPrev, onNext, disablePrev, disableNext }) => (
-  <div className="flex flex-row items-center justify-between gap-6 mt-4 w-full max-w-2xl px-2 py-3 md:px-6 md:py-4">
+  <div className="w-full max-w-2xl mx-auto flex flex-row items-center justify-between gap-6 mt-4 pb-6 md:pb-8">
     <button
       onClick={onPrev}
       disabled={disablePrev}
