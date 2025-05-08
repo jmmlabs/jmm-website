@@ -109,10 +109,14 @@ const FullscreenGallery: React.FC<FullscreenGalleryProps> = ({
           {/* Close Button */}
           <button
             onClick={e => { e.stopPropagation(); onClose(); }}
-            className="absolute top-6 right-8 text-3xl text-white/80 hover:text-white focus:outline-none z-10"
+            className="absolute top-6 right-8 w-10 h-10 rounded-full bg-muted text-muted-foreground flex items-center justify-center shadow hover:bg-border hover:text-foreground focus:outline-none transition-all z-10"
             aria-label="Close fullscreen gallery"
+            tabIndex={0}
           >
-            ×
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6" aria-hidden="true">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
           </button>
 
           {/* Progress Indicator */}
@@ -125,9 +129,10 @@ const FullscreenGallery: React.FC<FullscreenGalleryProps> = ({
             onClick={e => { e.stopPropagation(); if (globalIdx > 0) { const prev = flatImages[globalIdx - 1]; safeNavigate(prev.eventIdx, prev.imageIdx); }}}
             className="absolute left-2 md:left-8 top-1/2 -translate-y-1/2 bg-transparent text-white/70 hover:text-white px-2 py-1 rounded-full focus:outline-none z-10"
             aria-label="Previous image"
+            tabIndex={0}
             style={{ userSelect: "none" }}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
               <polyline points="15 6 9 12 15 18" />
             </svg>
           </button>
@@ -135,9 +140,10 @@ const FullscreenGallery: React.FC<FullscreenGalleryProps> = ({
             onClick={e => { e.stopPropagation(); if (globalIdx < globalTotal - 1) { const next = flatImages[globalIdx + 1]; safeNavigate(next.eventIdx, next.imageIdx); }}}
             className="absolute right-2 md:right-8 top-1/2 -translate-y-1/2 bg-transparent text-white/70 hover:text-white px-2 py-1 rounded-full focus:outline-none z-10"
             aria-label="Next image"
+            tabIndex={0}
             style={{ userSelect: "none" }}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
               <polyline points="9 6 15 12 9 18" />
             </svg>
           </button>
