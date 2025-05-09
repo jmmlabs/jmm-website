@@ -415,8 +415,7 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
                 />
               </div>
               <div
-                className="overflow-y-auto my-2 w-full max-w-2xl bg-muted/80 rounded shadow-inner"
-                style={{ maxHeight: '220px' }}
+                className="my-2 w-full max-w-2xl bg-muted/80 rounded shadow-inner"
               >
                 <TimelineModalDescription
                   description={currentEvent.description}
