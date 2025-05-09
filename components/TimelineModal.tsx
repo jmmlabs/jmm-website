@@ -366,15 +366,15 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
   aria-label={currentEvent.title || 'Timeline event modal'}
 >
   <div
-              ref={modalRef}
-              className="relative w-full max-w-3xl bg-card/95 border border-border rounded-2xl shadow-2xl flex flex-col py-4 px-2 md:px-8 mt-0 md:mt-8"
-              style={{
-                boxSizing: 'border-box',
-                height: 'auto',
-                flexDirection: 'column',
-              }}
-              onMouseDown={e => e.stopPropagation()}
-            >
+                ref={modalRef}
+                className="relative w-full max-w-2xl bg-card/95 border border-border rounded-2xl shadow-2xl flex flex-col py-4 px-4 md:px-8"
+                style={{
+                  boxSizing: 'border-box',
+                  height: 'auto',
+                  flexDirection: 'column',
+                }}
+                onMouseDown={e => e.stopPropagation()}
+              >
               {/* Close Button (absolute, top-right) */}
               <button
                 onClick={onClose}
@@ -389,14 +389,14 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
                 </svg>
               </button>
               {/* Header */}
-              <div className="flex-shrink-0 w-full">
+              <div className="w-full flex-shrink-0">
                 <TimelineModalHeader
                   title={currentEvent.title}
                   date={formatDate(currentEvent.date)}
                 />
               </div>
-              {validImages[selectedImgIdx] && (
-                <div className="flex-shrink-0 my-2 w-full max-h-[220px] mx-auto flex justify-center">
+{validImages[selectedImgIdx] && (
+                <div className="w-full flex-shrink-0 my-2 flex justify-center">
                   <TimelineModalMainImage
                     image={validImages[selectedImgIdx]}
                     title={currentEvent.title}
@@ -411,8 +411,8 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
                     setLoading={setLoading}
                   />
                 </div>
-              )}
-              <div className="flex-shrink-0 my-2 w-full mx-auto flex justify-center">
+                )}
+              <div className="w-full flex-shrink-0 my-2 flex justify-center">
                 <TimelineModalThumbnails
                   images={validImages}
                   selectedIdx={selectedImgIdx}
@@ -426,7 +426,7 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
                 />
               </div>
               <div
-                className="my-2 w-full max-w-2xl bg-muted/80 rounded shadow-inner"
+                className="w-full my-2 bg-muted/80"
               >
                 <TimelineModalDescription
                   description={currentEvent.description}
