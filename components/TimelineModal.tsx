@@ -34,6 +34,7 @@ import type { TimelineEvent, TimelineModalProps } from "./TimelineModal.types";
 import { launchBirthdayConfetti } from "./birthdayConfetti";
 
 import "../styles/hideScrollbar.css";
+import "../styles/customScrollbar.css";
 
 
 
