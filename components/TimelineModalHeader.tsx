@@ -6,7 +6,7 @@ const TimelineModalHeader: React.FC<Pick<TimelineModalHeaderProps, 'title' | 'da
     <h2 className="text-2xl md:text-3xl font-bold text-center mb-1 leading-tight w-full break-words">
       {title}
     </h2>
-    <div className="text-xs md:text-sm font-semibold text-primary bg-primary/10 px-3 py-0.5 mb-2 text-center w-full rounded-full tracking-wide shadow-sm">
+    <div className="text-xs md:text-sm font-semibold text-primary bg-primary/10 px-3 py-0.5 mb-2 mx-auto rounded-full tracking-wide shadow-sm">
       {date}
     </div>
   </div>
