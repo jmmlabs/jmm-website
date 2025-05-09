@@ -1,0 +1,14 @@
+.modal-header-responsive {
+  /* Extra top padding for small screens */
+  padding-top: 2.5rem;
+}
+@media (max-width: 480px) {
+  .modal-header-responsive {
+    padding-top: 3.5rem;
+  }
+}
+@media (max-width: 360px) {
+  .modal-header-responsive {
+    padding-top: 4.5rem;
+  }
+}

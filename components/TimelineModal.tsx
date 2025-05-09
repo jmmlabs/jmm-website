@@ -314,13 +314,10 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
             aria-label={currentEvent.title || 'Timeline event modal'}
           >
             <div
-              className="relative bg-card/95 border border-border rounded-2xl shadow-2xl max-w-3xl w-full flex flex-col min-h-[400px] max-h-[95vh] md:min-h-[540px] md:max-h-[95vh] p-0 md:p-8"
+              className="relative bg-card/95 border border-border rounded-2xl shadow-2xl w-full max-w-3xl md:w-auto md:max-w-3xl flex flex-col max-h-[95vh] overflow-y-auto px-2 md:px-8 pt-0 pb-0 mt-0 md:mt-8"
               style={{
                 boxSizing: 'border-box',
                 height: 'auto',
-                maxHeight: '95vh',
-                minHeight: '400px',
-                display: 'flex',
                 flexDirection: 'column',
               }}
               onMouseDown={e => e.stopPropagation()}
@@ -347,7 +344,7 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
               <div className="flex flex-col items-center w-full gap-y-4 px-4">
                 {/* Main Image */}
                 {validImages[selectedImgIdx] && (
-                  <div className="mb-3 w-full">
+                  <div className="mb-3 mt-3 w-full max-h-[30vh] md:max-h-none mx-auto flex justify-center">
                     <TimelineModalMainImage
                       image={validImages[selectedImgIdx]}
                       title={currentEvent.title}
@@ -364,7 +361,7 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
                   </div>
                 )}
                 {/* Thumbnails */}
-                <div className="mb-3 w-full">
+                <div className="mb-3 w-full mx-auto flex justify-center">
                   <TimelineModalThumbnails
                     images={validImages}
                     selectedIdx={selectedImgIdx}
