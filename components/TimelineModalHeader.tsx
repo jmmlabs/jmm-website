@@ -2,7 +2,7 @@ import React from "react";
 import type { TimelineModalHeaderProps } from "./TimelineModal.types";
 
 const TimelineModalHeader: React.FC<Pick<TimelineModalHeaderProps, 'title' | 'date'>> = ({ title, date }) => (
-  <div className="z-20 bg-card/95 pt-[env(safe-area-inset-top)] pt-6 md:pt-6 pb-2 flex flex-col rounded-t-2xl mb-3" style={{backdropFilter: 'blur(2px)'}}>
+  <div className="z-20 bg-card/95 pt-10 sm:pt-8 md:pt-6 pt-[env(safe-area-inset-top)] pb-2 flex flex-col rounded-t-2xl mb-3" style={{backdropFilter: 'blur(2px)'}}>
     <h2 className="text-2xl md:text-3xl font-bold text-center mb-1 leading-tight w-full break-words">
       {title}
     </h2>

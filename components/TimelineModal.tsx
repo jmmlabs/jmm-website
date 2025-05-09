@@ -1,5 +1,16 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
+
+// Scroll lock: Prevent background scroll when modal is open
+function useBodyScrollLock(isOpen: boolean) {
+  useEffect(() => {
+    if (isOpen) {
+      const original = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => { document.body.style.overflow = original; };
+    }
+  }, [isOpen]);
+}
 import { motion, AnimatePresence } from "framer-motion";
 import FullscreenGallery from "./FullscreenGallery";
 import TimelineModalHeader from "./TimelineModalHeader";
@@ -18,6 +29,8 @@ import "../styles/hideScrollbar.css";
 
 
 const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, currentIdx: initialIdx, total, onPrev, onNext, events }) => {
+  useBodyScrollLock(isOpen);
+
   // All hooks at the top, always called
   const [currentIdx, setCurrentIdx] = useState(initialIdx);
   const [selectedImgIdx, setSelectedImgIdx] = useState(0);
@@ -31,6 +44,25 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
   const descriptionRef = useRef<HTMLDivElement>(null);
   const thumbnailRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const lastConfettiEventTitle = useRef<string | null>(null);
+
+  // Dynamic vertical alignment state
+  const [shouldTopAlign, setShouldTopAlign] = useState(false);
+
+  // Effect to update modal alignment based on modal height vs viewport
+  useEffect(() => {
+    function checkModalHeight() {
+      if (!modalRef.current) return;
+      const modalHeight = modalRef.current.offsetHeight;
+      setShouldTopAlign(modalHeight + 48 > window.innerHeight); // 48px buffer for padding
+    }
+    if (isOpen) {
+      setTimeout(checkModalHeight, 20); // Wait for modal to render
+      window.addEventListener('resize', checkModalHeight);
+    }
+    return () => window.removeEventListener('resize', checkModalHeight);
+  }, [isOpen, selectedImgIdx, currentIdx, fullscreen]);
+
+  useBodyScrollLock(isOpen);
 
   // Effects that do NOT depend on currentEvent/validImages
   useEffect(() => {
@@ -68,10 +100,15 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
         if (canCardNext()) handleCardNext();
       }
     };
-    document.body.style.overflow = "hidden";
+    const isMobileScreen = window.innerWidth < 768;
+    if (isMobileScreen) {
+      document.body.style.overflow = "hidden";
+    }
     window.addEventListener("keydown", handleKeyDown);
     return () => {
-      document.body.style.overflow = "";
+      if (isMobileScreen) {
+        document.body.style.overflow = "";
+      }
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [isOpen, onClose, currentIdx, selectedImgIdx, fullscreen]);
@@ -155,10 +192,15 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
         if (canCardNext()) handleCardNext();
       }
     };
-    document.body.style.overflow = "hidden";
+    const isMobileScreen = window.innerWidth < 768;
+    if (isMobileScreen) {
+      document.body.style.overflow = "hidden";
+    }
     window.addEventListener("keydown", handleKeyDown);
     return () => {
-      document.body.style.overflow = "";
+      if (isMobileScreen) {
+        document.body.style.overflow = "";
+      }
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [isOpen, onClose, currentIdx, selectedImgIdx, fullscreen]);
@@ -301,20 +343,20 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            ref={modalRef}
-            initial={{ opacity: 0, y: 80 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 80 }}
-            transition={{ duration: 0.42, ease: 'easeInOut', type: 'spring', stiffness: 90, damping: 18 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-2 overflow-y-auto"
-            tabIndex={-1}
-            onMouseDown={handleBackdropClick}
-            aria-modal="true"
-            role="dialog"
-            aria-label={currentEvent.title || 'Timeline event modal'}
-          >
-            <div
-              className="relative bg-card/95 border border-border rounded-2xl shadow-2xl w-full max-w-3xl md:w-auto md:max-w-3xl flex flex-col max-h-[95vh] overflow-y-auto px-2 md:px-8 pt-0 pb-0 mt-0 md:mt-8"
+  initial={{ opacity: 0, y: 80 }}
+  animate={{ opacity: 1, y: 0 }}
+  exit={{ opacity: 0, y: 80 }}
+  transition={{ duration: 0.42, ease: 'easeInOut', type: 'spring', stiffness: 90, damping: 18 }}
+  className={`fixed inset-0 z-50 flex justify-center bg-black/60 backdrop-blur-sm px-2 overflow-y-auto ${shouldTopAlign ? 'items-start pt-6' : 'items-center pt-0'}`}
+  tabIndex={-1}
+  onMouseDown={handleBackdropClick}
+  aria-modal="true"
+  role="dialog"
+  aria-label={currentEvent.title || 'Timeline event modal'}
+>
+  <div
+              ref={modalRef}
+              className="relative w-full max-w-3xl bg-card/95 border border-border rounded-2xl shadow-2xl flex flex-col py-4 px-2 md:px-8 mt-0 md:mt-8"
               style={{
                 boxSizing: 'border-box',
                 height: 'auto',
@@ -325,7 +367,7 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
               {/* Close Button (absolute, top-right) */}
               <button
                 onClick={onClose}
-                className="absolute right-0 top-0 w-10 h-10 md:w-12 md:h-12 m-2 md:m-4 rounded-full bg-muted text-muted-foreground flex items-center justify-center shadow hover:bg-border hover:text-foreground focus:outline-none transition-all text-lg md:text-xl z-50"
+                className="absolute top-4 right-4 md:top-6 md:right-6 w-10 h-10 md:w-12 md:h-12 rounded-full bg-muted text-muted-foreground flex items-center justify-center shadow hover:bg-border hover:text-foreground focus:outline-none transition-all text-lg md:text-xl z-20"
                 aria-label="Close modal"
                 style={{ fontSize: 28 }}
                 tabIndex={0}
@@ -336,60 +378,58 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
                 </svg>
               </button>
               {/* Header */}
-              <TimelineModalHeader
-                title={currentEvent.title}
-                date={formatDate(currentEvent.date)}
-              />
-              {/* Main Content - optimal stacking and separation */}
-              <div className="flex flex-col items-center w-full gap-y-4 px-4">
-                {/* Main Image */}
-                {validImages[selectedImgIdx] && (
-                  <div className="mb-3 mt-3 w-full max-h-[30vh] md:max-h-none mx-auto flex justify-center">
-                    <TimelineModalMainImage
-                      image={validImages[selectedImgIdx]}
-                      title={currentEvent.title}
-                      onZoom={() => {
-                        if (justClosedRef.current) {
-                          justClosedRef.current = false; // Block accidental fullscreen
-                          return;
-                        }
-                        setFullscreen(true);
-                      }}
-                      loading={loading}
-                      setLoading={setLoading}
-                    />
-                  </div>
-                )}
-                {/* Thumbnails */}
-                <div className="mb-3 w-full mx-auto flex justify-center">
-                  <TimelineModalThumbnails
-                    images={validImages}
-                    selectedIdx={selectedImgIdx}
-                    onSelect={setSelectedImgIdx}
-                    thumbnailRefs={thumbnailRefs}
-                    canImagePrev={canImagePrev()}
-                    canImageNext={canImageNext()}
-                    handleImagePrev={handleImagePrev}
-                    handleImageNext={handleImageNext}
+              <div className="flex-shrink-0 w-full">
+                <TimelineModalHeader
+                  title={currentEvent.title}
+                  date={formatDate(currentEvent.date)}
+                />
+              </div>
+              {validImages[selectedImgIdx] && (
+                <div className="flex-shrink-0 my-2 w-full max-h-[220px] mx-auto flex justify-center">
+                  <TimelineModalMainImage
+                    image={validImages[selectedImgIdx]}
+                    title={currentEvent.title}
+                    onZoom={() => {
+                      if (justClosedRef.current) {
+                        justClosedRef.current = false; // Block accidental fullscreen
+                        return;
+                      }
+                      setFullscreen(true);
+                    }}
                     loading={loading}
+                    setLoading={setLoading}
                   />
                 </div>
-                {/* Description (visually distinct, scrollable) */}
-                <div className="py-3 mb-3 w-full max-w-2xl bg-muted/80 rounded shadow-inner">
-                  <TimelineModalDescription
-                    description={currentEvent.description}
-                    descriptionRef={descriptionRef}
-                  />
-                </div>
-                {/* Navigation Buttons (bottom, separated) */}
-                <div className="mt-4 w-full">
-                  <TimelineModalNavigation
-                    onPrev={handleCardPrev}
-                    onNext={handleCardNext}
-                    disablePrev={currentIdx === 0}
-                    disableNext={currentIdx === validEvents.length - 1}
-                  />
-                </div>
+              )}
+              <div className="flex-shrink-0 my-2 w-full mx-auto flex justify-center">
+                <TimelineModalThumbnails
+                  images={validImages}
+                  selectedIdx={selectedImgIdx}
+                  onSelect={setSelectedImgIdx}
+                  thumbnailRefs={thumbnailRefs}
+                  canImagePrev={canImagePrev()}
+                  canImageNext={canImageNext()}
+                  handleImagePrev={handleImagePrev}
+                  handleImageNext={handleImageNext}
+                  loading={loading}
+                />
+              </div>
+              <div
+                className="overflow-y-auto my-2 w-full max-w-2xl bg-muted/80 rounded shadow-inner"
+                style={{ maxHeight: '220px' }}
+              >
+                <TimelineModalDescription
+                  description={currentEvent.description}
+                  descriptionRef={descriptionRef}
+                />
+              </div>
+              <div className="flex-shrink-0 mt-3 w-full">
+                <TimelineModalNavigation
+                  onPrev={handleCardPrev}
+                  onNext={handleCardNext}
+                  disablePrev={currentIdx === 0}
+                  disableNext={currentIdx === validEvents.length - 1}
+                />
               </div>
             </div>
           </motion.div>
