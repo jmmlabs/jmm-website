@@ -4,8 +4,8 @@ import type { TimelineModalDescriptionProps } from "./TimelineModal.types";
 const TimelineModalDescription: React.FC<Readonly<TimelineModalDescriptionProps>> = ({ description, descriptionRef }) => (
   <div
     ref={descriptionRef}
-    className="overflow-y-auto text-base md:text-lg text-muted-foreground mb-2 text-center w-full break-words bg-muted/70 py-2"
-    style={{ height: '220px' }}
+    className="w-full h-full overflow-y-auto text-base md:text-lg text-muted-foreground mb-2 text-center break-words py-2"
+    
     tabIndex={0}
   >
     {description}

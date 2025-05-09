@@ -426,7 +426,7 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
                 />
               </div>
               <div
-                className="w-full my-2 bg-muted/80"
+                className="w-full my-2 bg-muted/80 rounded-2xl h-[220px] px-4 py-2 md:px-6 md:py-3"
               >
                 <TimelineModalDescription
                   description={currentEvent.description}
