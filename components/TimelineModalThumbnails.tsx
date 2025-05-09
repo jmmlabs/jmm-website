@@ -13,7 +13,7 @@ const TimelineModalThumbnails: React.FC<Readonly<TimelineModalThumbnailsProps>> 
   handleImageNext,
   loading,
 }) => (
-  <div className="relative flex items-center max-w-2xl w-full mt-2 mb-2 h-[56px]">
+  <div className="relative flex items-center w-full mt-2 mb-2 h-[56px]">
     {/* Thumbnails Row (strictly contained between arrows) */}
     <div className="w-full flex items-center justify-center relative" style={{ maxWidth: '100%' }}>
       {/* Left black edge mask & arrow */}
