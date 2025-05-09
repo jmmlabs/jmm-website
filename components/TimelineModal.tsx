@@ -4,10 +4,21 @@ import React, { useEffect, useRef, useState } from "react";
 // Scroll lock: Prevent background scroll when modal is open
 function useBodyScrollLock(isOpen: boolean) {
   useEffect(() => {
-    if (isOpen) {
-      const original = document.body.style.overflow;
+    let original: string;
+    function lockScroll() {
+      original = document.body.style.overflow;
       document.body.style.overflow = 'hidden';
-      return () => { document.body.style.overflow = original; };
+    }
+    function unlockScroll() {
+      document.body.style.overflow = original;
+    }
+    if (isOpen) {
+      lockScroll();
+      window.addEventListener('resize', lockScroll);
+      return () => {
+        unlockScroll();
+        window.removeEventListener('resize', lockScroll);
+      };
     }
   }, [isOpen]);
 }
