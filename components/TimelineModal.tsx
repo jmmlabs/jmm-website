@@ -49,13 +49,20 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
   const lastClosedAt = useRef<number>(0);
   // Synchronous interaction lock
   const interactionLocked = useRef(false);
-  useBodyScrollLock(isOpen);
+  const [fullscreen, setFullscreen] = useState(false);
+  useBodyScrollLock(isOpen || fullscreen);
 
   // All hooks at the top, always called
   const [currentIdx, setCurrentIdx] = useState(initialIdx);
   const [selectedImgIdx, setSelectedImgIdx] = useState(0);
   const [fade, setFade] = useState(false);
-  const [fullscreen, setFullscreen] = useState(false);
+
+  // Ensure scroll lock is re-applied after exiting fullscreen if modal is still open
+  useEffect(() => {
+    if (!fullscreen && isOpen) {
+      document.body.style.overflow = 'hidden';
+    }
+  }, [fullscreen, isOpen]);
   // Prevent accidental fullscreen after modal close
   const justClosedRef = useRef(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -82,7 +89,7 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
     return () => window.removeEventListener('resize', checkModalHeight);
   }, [isOpen, selectedImgIdx, currentIdx, fullscreen]);
 
-  useBodyScrollLock(isOpen);
+  useBodyScrollLock(isOpen || fullscreen);
 
   // Effects that do NOT depend on currentEvent/validImages
   useEffect(() => {
