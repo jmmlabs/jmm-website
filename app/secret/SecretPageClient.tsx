@@ -7,6 +7,102 @@ const PASSWORDS = [
   { password: "nakamarra", route: "/hannah" }
 ];
 
+import { HintBubble } from "@/components/HintBubble";
+import { useFloating, autoUpdate, offset, flip, shift, arrow, useDismiss, useInteractions } from "@floating-ui/react-dom-interactions";
+
+function ForgotPasswordWithHint() {
+  const [open, setOpen] = React.useState(false);
+  const arrowRef = React.useRef<HTMLDivElement>(null);
+  // Local DOM refs
+  const buttonNodeRef = React.useRef<HTMLButtonElement | null>(null);
+  const bubbleNodeRef = React.useRef<HTMLDivElement | null>(null);
+  const { x, y, reference, floating, strategy, placement, middlewareData, context } = useFloating({
+    placement: "bottom",
+    open,
+    onOpenChange: setOpen,
+    whileElementsMounted: autoUpdate,
+    middleware: [offset(8), flip(), shift({ padding: 8 }), arrow({ element: arrowRef })],
+  });
+
+  const dismiss = useDismiss(context, { outsidePressEvent: "mousedown" });
+  const { getReferenceProps, getFloatingProps } = useInteractions([dismiss]);
+
+  // Callback refs to connect both local ref and Floating UI ref
+  const setButtonRef = React.useCallback(
+    (node: HTMLButtonElement | null) => {
+      buttonNodeRef.current = node;
+      if (typeof reference === "function") reference(node);
+    },
+    [reference]
+  );
+  const setBubbleRef = React.useCallback(
+    (node: HTMLDivElement | null) => {
+      bubbleNodeRef.current = node;
+      if (typeof floating === "function") floating(node);
+    },
+    [floating]
+  );
+
+  // Arrow positioning
+  const staticSide = {
+    top: "bottom",
+    right: "left",
+    bottom: "top",
+    left: "right",
+  }[placement.split("-")[0]] as string;
+
+  return (
+    <>
+      <button
+        {...getReferenceProps({
+          ref: setButtonRef,
+          type: "button",
+          className: "underline mt-3 text-muted-foreground font-semibold text-sm hover:text-primary focus:outline-none",
+          tabIndex: 0,
+          "aria-describedby": open ? "forgot-password-hint" : undefined,
+          onClick: () => setOpen((o) => !o),
+        })}
+      >
+        Forgot Password
+      </button>
+      {open && (
+        <div
+          {...getFloatingProps({
+            ref: setBubbleRef,
+            role: "tooltip",
+            className: "z-50 absolute pointer-events-auto",
+            style: {
+              position: strategy,
+              top: y ?? 0,
+              left: x ?? 0,
+              minWidth: 140,
+              maxWidth: 320,
+              fontFamily: 'system-ui, sans-serif',
+              letterSpacing: 0.01,
+            },
+            "aria-live": "polite",
+          })}
+        >
+          {/* Arrow */}
+          <div
+            ref={arrowRef}
+            className="w-3 h-3 border border-zinc-700 dark:border-zinc-800 bg-zinc-900 dark:bg-zinc-900 rotate-45 absolute"
+            style={{
+              left: middlewareData.arrow?.x != null ? middlewareData.arrow.x : undefined,
+              top: middlewareData.arrow?.y != null ? middlewareData.arrow.y : undefined,
+              [staticSide]: "-6px",
+              boxShadow: '0 2px 8px 0 rgba(0,0,0,0.10)'
+            }}
+          />
+          <div className="bg-zinc-900 border border-zinc-700 dark:bg-zinc-900 dark:border-zinc-800 text-zinc-100 dark:text-zinc-100 rounded-md px-3 py-1.5 shadow-lg text-xs font-medium text-center animate-fade-in select-none overflow-y-auto">
+            Hint: What is the name of the song you showed me that has your name in it?
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
 export default function SecretPageClient() {
   const [input, setInput] = useState("");
   const [error, setError] = useState(false);
@@ -139,23 +235,8 @@ export default function SecretPageClient() {
             </motion.form>
           )}
         </AnimatePresence>
-        <AnimatePresence>
-          {!success && (
-            <motion.button
-              key="forgot-password"
-              type="button"
-              className="underline mt-3 text-muted-foreground font-semibold text-sm hover:text-primary"
-              tabIndex={-1}
-              aria-disabled="true"
-              initial={{ opacity: 1, y: 0 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 12 }}
-              transition={{ duration: 0.3 }}
-            >
-              Forgot Password
-            </motion.button>
-          )}
-        </AnimatePresence>
+        {/* Forgot Password Button with HintBubble */}
+        <ForgotPasswordWithHint />
       </div>
     </main>
   );
