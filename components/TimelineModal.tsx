@@ -1,27 +1,27 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 
-// Scroll lock: Prevent background scroll when modal is open
+// Improved scroll lock: Prevent background scroll when modal is open (supports stacking)
+const scrollLockStack: string[] = [];
 function useBodyScrollLock(isOpen: boolean) {
   useEffect(() => {
-    let original: string;
-    function lockScroll() {
-      original = document.body.style.overflow;
-      document.body.style.overflow = 'hidden';
-    }
-    function unlockScroll() {
-      document.body.style.overflow = original;
-    }
     if (isOpen) {
-      lockScroll();
+      // Save the current overflow value to the stack
+      scrollLockStack.push(document.body.style.overflow);
+      document.body.style.overflow = 'hidden';
+      const lockScroll = () => { document.body.style.overflow = 'hidden'; };
       window.addEventListener('resize', lockScroll);
       return () => {
-        unlockScroll();
+        // Restore the previous overflow value from the stack
+        scrollLockStack.pop();
+        const prev = scrollLockStack.length > 0 ? scrollLockStack[scrollLockStack.length - 1] : '';
+        document.body.style.overflow = prev;
         window.removeEventListener('resize', lockScroll);
       };
     }
   }, [isOpen]);
 }
+
 import { motion, AnimatePresence } from "framer-motion";
 import FullscreenGallery from "./FullscreenGallery";
 import TimelineModalHeader from "./TimelineModalHeader";
