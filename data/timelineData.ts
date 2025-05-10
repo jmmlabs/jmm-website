@@ -95,13 +95,14 @@ export const timelineData: TimelineEvent[] = [
     description: "You'd think it would be hard to follow such an amazing date, but the next weekend at Medieval Times might have been even more fun! Hannah finally got to meet Papi and later reunite with her budding friends, Jenni and Eric. After being heavily recruited to a short film competition by Setshi and his brother on the ride over, the four of them took the castle by storm with Hannah stealing the show after catching a flower from one of the knights (Jacob was only a little jealous). Little did they know, the night was just getting started. They returned to Stew & Setshi's after a quick restock of BuzzBalls (never again) and wine at 7-Eleven. What followed was an unforgettable night filled with new friends, celebrity crushes, and a rare moisturizer discovery!",
     images: [
       "/hannah-timeline/09-medieval-times/img1-medieval-times.jpg",
+      "/hannah-timeline/09-medieval-times/img2-flower.jpg",
       "/hannah-timeline/09-medieval-times/img4-cleanser.jpeg"
     ],
     date: "2025-04-19",
   },
   {
     title: "Best Call Ever",
-    description: "These two have really been on a roll, but this was a particularly special night. What started as an impromptu FaceTime the night before Jacob's flight to his friend's wedding ended as a 5-hour heart-to-heart, where both Hannah and Jacob opened up more about their exes and impactful experiences from their pasts, allowing themselves to be vulnerable and understand each other on a deeper level. It was a deeply meaningful conversation, one that meant so much to Jacob. To top it all off, Hannah created one of the best playlists of all time, introducing Jacob to 90+ amazing new songs and keeping him warm, happy, and grateful all weekend.",
+    description: "These two have really been on a roll, but this was a particularly special night. What started as an impromptu FaceTime the night before Jacob's flight to his friend's wedding ended as a 5-hour heart-to-heart, where both Hannah and Jacob opened up more about their exes and impactful experiences from their pasts, allowing themselves to be vulnerable and understand each other on a deeper level. It was a very special conversation that meant so much to Jacob. To top it all off, Hannah created one of the best playlists of all time, introducing Jacob to 90+ amazing new songs and keeping him warm, happy, and grateful all weekend.",
     images: [
       "/hannah-timeline/10-best-call-ever/img1-phone-ghibli.jpg",
       "/hannah-timeline/10-best-call-ever/img2-playlist.jpg"
