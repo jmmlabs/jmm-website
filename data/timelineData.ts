@@ -85,7 +85,8 @@ export const timelineData: TimelineEvent[] = [
     title: "Best Date Ever",
     description: "The date could have gotten off to a rocky start after Jacob couldn't find parking and tried to squeeze into a very tight spot, one that Hannah warned him against, where he ended up scraping the side of his car. Here he learned a very important lesson, always listen to Hannah. This was unfortunate, but nothing, not even cilantro on their nachos, or a ping pong ball to the chest, could ruin the night of fun they were about to have. There wasn't anything particularly extraordinary about the night, but spending quality time together and having fun laughing, playing games, and getting locked out of Cosm, made it Jacob's favorite date of all time. From now on, seeing those scratches will always remind him of how much fun they had that night, and how they were able to make the best of every situation.",
     images: [
-      "/hannah-timeline/08-popstroke/img1-popstroke-ghibli.jpg"
+      "/hannah-timeline/08-popstroke/img1-popstroke-ghibli.jpg",
+      "/hannah-timeline/08-popstroke/img2-car-scratch.jpg"
     ],
     date: "2025-04-12",
   },
