@@ -2,13 +2,13 @@ import React from "react";
 import Image from "next/image";
 import type { TimelineModalMainImageProps } from "./TimelineModal.types";
 
-const TimelineModalMainImage: React.FC<Readonly<TimelineModalMainImageProps & { loading: boolean; setLoading: (loading: boolean) => void }>> = ({ image, title, onZoom, loading, setLoading }) => (
+const TimelineModalMainImage: React.FC<Readonly<TimelineModalMainImageProps & { loading: boolean; setLoading: (loading: boolean) => void; isExiting?: boolean }>> = ({ image, title, onZoom, loading, setLoading, isExiting }) => (
   <div className="flex items-center justify-center w-full h-[180px] md:h-[240px]">
     <div
       className="relative rounded-2xl border-4 border-border bg-background shadow-lg w-full h-full flex items-center justify-center"
-      style={{ aspectRatio: '16/9', cursor: 'zoom-in' }}
-      onClick={onZoom}
-      tabIndex={0}
+      style={{ aspectRatio: '16/9', cursor: isExiting ? 'default' : 'zoom-in', pointerEvents: isExiting ? 'none' : undefined }}
+      onClick={isExiting ? undefined : onZoom}
+      tabIndex={isExiting ? -1 : 0}
       aria-label="Open fullscreen gallery"
     >
       {loading && (

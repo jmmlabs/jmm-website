@@ -40,7 +40,15 @@ import "../styles/customScrollbar.css";
 
 
 
+
+
 const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, currentIdx: initialIdx, total, onPrev, onNext, events }) => {
+  // Pointer-events block during exit
+  const [isExiting, setIsExiting] = useState(false);
+  // Timestamp of last modal close
+  const lastClosedAt = useRef<number>(0);
+  // Synchronous interaction lock
+  const interactionLocked = useRef(false);
   useBodyScrollLock(isOpen);
 
   // All hooks at the top, always called
@@ -83,10 +91,15 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
       setSelectedImgIdx(0);
       setFullscreen(false);
       setReady(false);
+      setIsExiting(false);
+      interactionLocked.current = false;
       setTimeout(() => setReady(true), 0);
     } else {
       setReady(false);
-      justClosedRef.current = true; // Set flag on modal close
+      setIsExiting(true);
+      lastClosedAt.current = Date.now();
+      // Modal exit animation duration (matches AnimatePresence exit duration)
+      setTimeout(() => setIsExiting(false), 450); // 450ms slightly more than 0.42s
     }
   }, [isOpen, card, initialIdx]);
 
@@ -355,30 +368,31 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
       <AnimatePresence>
         {isOpen && (
           <motion.div
-  initial={{ opacity: 0, y: 80 }}
-  animate={{ opacity: 1, y: 0 }}
-  exit={{ opacity: 0, y: 80 }}
-  transition={{ duration: 0.42, ease: 'easeInOut', type: 'spring', stiffness: 90, damping: 18 }}
-  className={`fixed inset-0 z-50 flex justify-center bg-black/60 backdrop-blur-sm px-2 overflow-y-auto ${shouldTopAlign ? 'items-start pt-6' : 'items-center pt-0'}`}
-  tabIndex={-1}
-  onMouseDown={handleBackdropClick}
-  aria-modal="true"
-  role="dialog"
-  aria-label={currentEvent.title || 'Timeline event modal'}
->
-  <div
-                ref={modalRef}
-                className="relative w-full max-w-3xl bg-card/95 border border-border rounded-2xl shadow-2xl flex flex-col py-4 px-4 md:px-8"
-                style={{
-                  boxSizing: 'border-box',
-                  height: 'auto',
-                  flexDirection: 'column',
-                }}
-                onMouseDown={e => e.stopPropagation()}
-              >
+            initial={{ opacity: 0, y: 80 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 80 }}
+            transition={{ duration: 0.42, ease: 'easeInOut', type: 'spring', stiffness: 90, damping: 18 }}
+            className={`fixed inset-0 z-50 flex justify-center bg-black/60 backdrop-blur-sm px-2 overflow-y-auto ${shouldTopAlign ? 'items-start pt-6' : 'items-center pt-0'}`}
+            tabIndex={-1}
+            onMouseDown={e => { interactionLocked.current = true; handleBackdropClick(e); }}
+            aria-modal="true"
+            role="dialog"
+            aria-label={currentEvent.title || 'Timeline event modal'}
+            style={{ pointerEvents: isExiting ? 'none' : undefined }}
+          >
+            <div
+              ref={modalRef}
+              className="relative w-full max-w-3xl bg-card/95 border border-border rounded-2xl shadow-2xl flex flex-col py-4 px-4 md:px-8"
+              style={{
+                boxSizing: 'border-box',
+                height: 'auto',
+                flexDirection: 'column',
+              }}
+              onMouseDown={e => e.stopPropagation()}
+            >
               {/* Close Button (absolute, top-right) */}
               <button
-                onClick={onClose}
+                onClick={() => { interactionLocked.current = true; onClose(); }}
                 className="absolute top-4 right-4 md:top-6 md:right-6 w-10 h-10 md:w-12 md:h-12 rounded-full bg-muted text-muted-foreground flex items-center justify-center shadow hover:bg-border hover:text-foreground focus:outline-none transition-all text-lg md:text-xl z-20"
                 aria-label="Close modal"
                 style={{ fontSize: 28 }}
@@ -396,23 +410,21 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
                   date={formatDate(currentEvent.date)}
                 />
               </div>
-{validImages[selectedImgIdx] && (
+              {!isExiting && validImages[selectedImgIdx] && (
                 <div className="w-full flex-shrink-0 my-2">
                   <TimelineModalMainImage
                     image={validImages[selectedImgIdx]}
                     title={currentEvent.title}
                     onZoom={() => {
-                      if (justClosedRef.current) {
-                        justClosedRef.current = false; // Block accidental fullscreen
-                        return;
-                      }
+                      if (interactionLocked.current) return;
+                      if (lastClosedAt.current && Date.now() - lastClosedAt.current < 450) return;
                       setFullscreen(true);
                     }}
                     loading={loading}
                     setLoading={setLoading}
                   />
                 </div>
-                )}
+              )}
               <div className="w-full flex-shrink-0 my-2 flex justify-center">
                 <TimelineModalThumbnails
                   images={validImages}
