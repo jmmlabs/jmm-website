@@ -44,20 +44,27 @@ export default function Timeline() {
   const nextModal = () => setModalIdx((idx) => (idx !== null && idx < sorted.length - 1 ? idx + 1 : idx));
 
   return (
-    <section className="relative w-full flex flex-col items-center pt-8 pb-16 px-2">
+    <section className="relative w-full max-w-full md:max-w-4xl md:mx-auto flex flex-col items-center pt-8 pb-16 px-0 sm:px-2 md:px-4 overflow-x-hidden">
       <h2 className="text-3xl font-bold mb-8 text-center text-foreground">OUR STORY</h2>
-      <div ref={timelineWrapperRef} className="relative w-full max-w-4xl mx-auto min-h-[600px] grid grid-cols-3 md:grid-cols-[2fr_28px_2fr] gap-x-0 items-start bg-transparent" style={{ scrollbarGutter: 'stable' }}>
+      <div ref={timelineWrapperRef} className="relative w-full max-w-full md:max-w-4xl md:mx-auto min-h-[600px] grid grid-cols-3 md:grid-cols-[2fr_28px_2fr] gap-x-0 items-start bg-transparent" style={{ scrollbarGutter: 'stable' }}>
         {/* Timeline cards, dots, and line segments */}
         {sorted.map((event, idx) => {
           // Intersection observer for this row
-          const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.2 });
+          const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.01 });
           useEffect(() => { handleInView(idx, inView); }, [inView]);
           return (
             <React.Fragment key={event.date + event.title}>
               {/* Left column (even idx) */}
-              <div className={`flex justify-end items-center min-h-[140px] snap-start ${idx % 2 === 0 ? '' : 'invisible'}`}
-                style={{ zIndex: 2 }}>
-                {idx % 2 === 0 && <TimelineCard {...event} side="left" idx={idx} forwardedRef={ref} inView={inView} />}
+              <div className={`flex justify-end items-center min-h-[140px] snap-start w-full mx-auto max-w-[90vw] md:max-w-none ${idx % 2 === 0 ? '' : 'invisible'}`}>
+                {idx % 2 === 0 && (
+  <TimelineCard
+    {...event}
+    side="left"
+    idx={idx}
+    forwardedRef={ref}
+    inView={inView || (typeof window !== 'undefined' && window.innerWidth < 400)}
+  />
+)}
               </div>
               {/* Center column: timeline dot and vertical line */}
               <div className="flex flex-col items-center h-full min-h-[80px] md:min-h-[140px] z-10">
@@ -77,9 +84,16 @@ export default function Timeline() {
                 {idx === sorted.length - 1 && <div className="flex-grow" />}
               </div>
               {/* Right column (odd idx) */}
-              <div className={`flex justify-start items-center min-h-[140px] snap-start ${idx % 2 === 1 ? '' : 'invisible'}`}
-                style={{ zIndex: 2 }}>
-                {idx % 2 === 1 && <TimelineCard {...event} side="right" idx={idx} forwardedRef={ref} inView={inView} />}
+              <div className={`flex justify-start items-center min-h-[140px] snap-start w-full mx-auto max-w-[90vw] md:max-w-none ${idx % 2 === 1 ? '' : 'invisible'}`}>
+                {idx % 2 === 1 && (
+  <TimelineCard
+    {...event}
+    side="right"
+    idx={idx}
+    forwardedRef={ref}
+    inView={inView || (typeof window !== 'undefined' && window.innerWidth < 400)}
+  />
+)}
               </div>
             </React.Fragment>
           );

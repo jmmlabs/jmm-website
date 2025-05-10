@@ -75,10 +75,9 @@
   body {
     font-family: Arial, Helvetica, sans-serif;
     @apply bg-background text-foreground;
+    overflow-x: hidden;
   }
-  * {
-    /* Removed @apply border-border; which caused Tailwind error */
-  }
+
 }
 
 @layer utilities {
