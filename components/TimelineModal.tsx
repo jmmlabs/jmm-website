@@ -114,37 +114,6 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
     setIsMobile(window.innerWidth < 768);
   }, []);
 
-  // Unified keyboard navigation: left/right for images, up/down for cards
-  useEffect(() => {
-    if (!isOpen || fullscreen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-      if (e.key === "ArrowLeft") {
-        if (canImagePrev()) handleImagePrev();
-      }
-      if (e.key === "ArrowRight") {
-        if (canImageNext()) handleImageNext();
-      }
-      if (e.key === "ArrowUp") {
-        if (canCardPrev()) handleCardPrev();
-      }
-      if (e.key === "ArrowDown") {
-        if (canCardNext()) handleCardNext();
-      }
-    };
-    const isMobileScreen = window.innerWidth < 768;
-    if (isMobileScreen) {
-      document.body.style.overflow = "hidden";
-    }
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      if (isMobileScreen) {
-        document.body.style.overflow = "";
-      }
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [isOpen, onClose, currentIdx, selectedImgIdx, fullscreen]);
-
   // --- Navigation logic helpers ---
   const canCardPrev = () => currentIdx > 0;
   const canCardNext = () => currentIdx < validEvents.length - 1;
@@ -203,13 +172,15 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
     }
   };
 
-  useEffect(() => {
-    setIsMobile(window.innerWidth < 768);
-  }, []);
-
+  // Unified keyboard navigation: left/right for images, up/down for cards
   useEffect(() => {
     if (!isOpen || fullscreen) return;
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't interfere with typing in inputs, textareas, or contenteditables
+      const tag = (e.target as HTMLElement)?.tagName;
+      const isEditable = (e.target as HTMLElement)?.isContentEditable;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || isEditable) return;
+
       if (e.key === "Escape") onClose();
       if (e.key === "ArrowLeft") {
         if (canImagePrev()) handleImagePrev();
@@ -218,24 +189,29 @@ const TimelineModal: React.FC<TimelineModalProps> = ({ isOpen, onClose, card, cu
         if (canImageNext()) handleImageNext();
       }
       if (e.key === "ArrowUp") {
-        if (canCardPrev()) handleCardPrev();
+        if (canCardPrev()) {
+          handleCardPrev();
+        }
+        e.preventDefault();
+        e.stopPropagation();
       }
       if (e.key === "ArrowDown") {
-        if (canCardNext()) handleCardNext();
+        if (canCardNext()) {
+          handleCardNext();
+        }
+        e.preventDefault();
+        e.stopPropagation();
       }
     };
-    const isMobileScreen = window.innerWidth < 768;
-    if (isMobileScreen) {
-      document.body.style.overflow = "hidden";
-    }
     window.addEventListener("keydown", handleKeyDown);
     return () => {
-      if (isMobileScreen) {
-        document.body.style.overflow = "";
-      }
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isOpen, onClose, currentIdx, selectedImgIdx, fullscreen]);
+  }, [isOpen, fullscreen, onClose, canImagePrev, handleImagePrev, canImageNext, handleImageNext, canCardPrev, handleCardPrev, canCardNext, handleCardNext]);
+
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 768);
+  }, []);
 
   // Derived values after all hooks
   const validEvents = events.map(ev => ({
