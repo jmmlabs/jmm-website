@@ -2,6 +2,7 @@ import "@/styles/globals.css"
 import { Inter } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
 import SecretPageTrigger from "@/components/SecretPageTrigger";
+import { Analytics } from "@vercel/analytics/react";
 import type React from "react"
 
 const inter = Inter({ subsets: ["latin"] })
@@ -59,6 +60,8 @@ export default function RootLayout({
       <body className={inter.className} suppressHydrationWarning>
         <ThemeProvider>{children}</ThemeProvider>
         <SecretPageTrigger />
+        {/* Vercel Analytics */}
+        <Analytics />
       </body>
     </html>
   )
